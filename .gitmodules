@@ -1,0 +1,7 @@
+[submodule "themes/cela"]
+	path = themes/cela
+	url = https://github.com/edwardzcn-decade/cela
+[submodule "themes/linkita"]
+	path = themes/linkita
+	url = https://codeberg.org/salif/linkita.git
+	branch = v4
