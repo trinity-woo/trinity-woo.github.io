@@ -7,7 +7,7 @@ compile_sass = true
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = false
 
-title = "My Blog"
+title = "Trinity Wu"
 theme = "linkita"
 generate_feeds = true
 
@@ -15,4 +15,23 @@ taxonomies = [
     { name = "tags", feed = true },
 ]
 
+[extra]
+
+header_menu_name = "menu_name"
+
+[extra.menus]
+menu_name = [
+  { url = "$BASE_URL/projects/", name = "Projects" },
+]
+
+[extra.profiles.trinity]
+
+social = [
+{ name = "linkedin", url = "https://www.linkedin.com/in/trinity-wu/" },
+{ name = "email", url = "mailto:tew58@cornell.edu"},
+]
+
+name = "Welcome!"
+
+bio = "Hi, I'm Trinity. I study Mechanical Engineering (BS) and Aerospace Engineering (M.Eng) at Cornell University. I like to make things move, fly, and navigate space. I enjoy creating art, music, and miso soup. Check out [my projects here](/projects)!"
 
