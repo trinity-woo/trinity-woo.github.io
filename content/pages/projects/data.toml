@@ -1,7 +1,0 @@
-[[project]]
-name = "MAE 5910: Fast Robots"
-desc = "Lab write-ups for implementing autonomous robots."
-tags = ["robotics"]
-links = [
-    { name = "Go to project →", url = "/pages/projects/MAE5910/" },
-]
