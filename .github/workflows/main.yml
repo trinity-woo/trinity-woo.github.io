@@ -1,21 +1,18 @@
-name: github pages
-on:
+name: Zola on GitHub Pages
+
+on: 
  push:
- branches:
- - main
+  branches:
+   - main
+
 jobs:
- deploy:
- runs-on: ubuntu-latest
- steps:
- - uses: actions/checkout@v4
- with:
- submodules: true
- - name: Install and Run Zola
- run: |
- sudo snap install --edge zola
- zola build
- - name: Deploy
- uses: peaceiris/actions-gh-pages@v4
- with:
- github_token: ${{ secrets.TOKEN }}
- publish_dir: ./public
+  build:
+    name: Publish site
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v4
+    - name: Build and deploy
+      uses: shalzz/zola-deploy-action@v0.22.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
