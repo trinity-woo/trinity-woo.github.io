@@ -6,3 +6,5 @@ paginate_by = 4
 [extra]
 profile = "trinity"
 +++
+
+![Me](profile.png)
