@@ -15,7 +15,7 @@
               "state": {
                 "file": "content/pages/projects/MAE5910/lab1.md",
                 "mode": "source",
-                "source": false
+                "source": true
               },
               "icon": "lucide-file",
               "title": "lab1"
@@ -185,12 +185,35 @@
   },
   "active": "f7e505ba776f0754",
   "lastOpenFiles": [
-    "themes/linkita/static/favicon.ico",
-    "public/icons8-gear-96 (1).png",
-    "themes/linkita/static/icons8-gear-96 (1).png",
-    "public/favicon_copy.ico",
-    "themes/linkita/static/icons8-gear-96.png",
-    "themes/linkita/static/favicon_copy.ico",
+    "public/lab1/microphone.webm",
+    "static/lab1/microphone.webm",
+    "public/lab1/Screencast From 2026-01-30 14-36-20.webm",
+    "static/lab1/artemis.png",
+    "static/lab1/blink.mp4",
+    "static/lab1/connect.png",
+    "static/lab1/macaddress.png",
+    "static/lab1/messagesize.png",
+    "static/lab1/notif.webm",
+    "static/lab1/quicksend.png",
+    "static/lab1/tuner.mp4",
+    "static/lab1/temp.webm",
+    "content/pages/projects/MAE5910/lab1.md",
+    "lab1/blink/mp4.md",
+    "public/lab1/serial.png",
+    "static/lab1/serial.png",
+    "content/pages/projects/index.md",
+    "lab1/blink",
+    "lab1",
+    "public/lab1/blink.mp4",
+    "public/lab1/tuner.mp4",
+    "public/lab1/quicksend.png",
+    "public/lab1/messagesize.png",
+    "public/lab1/connect.png",
+    "static/lab1/macaddress.md",
+    "public/lab1/macaddress.md",
+    "static/lab1.md",
+    "public/lab1.md",
+    "content/pages/projects/MAE5910/_index.md",
     "content/_index.md"
   ]
 }

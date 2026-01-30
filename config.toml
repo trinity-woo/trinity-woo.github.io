@@ -19,6 +19,9 @@ taxonomies = [
 
 header_menu_name = "menu_name"
 
+disable_default_favicon = true
+
+
 [extra.menus]
 menu_name = [
   { url = "$BASE_URL/projects/", name = "Projects" },
@@ -50,3 +53,11 @@ header_color = "#e6e9ef"
 # The custom header color in dark mode, only available
 # when "header_blur" is false.
 header_dark_color = "#181926"
+
+[markdown]
+
+[markdown.highlighting]
+error_on_missing_language = true
+style = "inline"
+light_theme = "github-light"
+dark_theme = "github-dark"
