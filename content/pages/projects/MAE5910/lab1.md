@@ -8,7 +8,7 @@ Setting up the Artemis board and sending bluetooth data between the computer and
 
 ## Lab 1A
 ### Prelab
-This section's setup included updating the ArduinoIDE and installing the custom Sparkfun Apollo3 board definition for development with the Artemis. 
+Prelab setup included updating the ArduinoIDE and installing the custom Sparkfun Apollo3 board definition for development with the Artemis. 
 
 ### 1 Artemis Connection
 
@@ -153,20 +153,20 @@ case SEND_THREE_FLOATS:
       break;
 ```
 
-When running the following code cell in Jupyter, separating each command with |:
+When running the following code cell in Jupyter, separating each command with "|":
 
 ```python
 ble.send_command(CMD.SEND_THREE_FLOATS, "1|2|3")
 ble.send_command(CMD.SEND_THREE_FLOATS, "0|6|2")
 ```
 
-The Artemis receives and outputs the floats. 
+The Artemis receives and outputs the floats: 
 
 ![](/lab1/3int.png)
 
 ### 3 Get Time
 
-The built-in *millis* function is utilized to keep track of the current program runtime. 
+The built-in *millis()* function is utilized to keep track of the current program runtime.
 
 ```c++
 case GET_TIME_MILLIS:
@@ -182,3 +182,231 @@ case GET_TIME_MILLIS:
 
       break;
 ```
+
+### 4 Notification Handler
+
+A notification handler is used to receive and extract the time from *GET_TIME_MILLIS*.
+
+```python
+def notification_handler(uuid, byte_array):
+
+    time = ble.bytearray_to_string(byte_array)
+    extract = time[2:]
+    print(extract)
+```
+
+When running the command, the extracted time is printed.
+
+<video src="/lab1/gettime.webm" loop autoplay muted></video>
+
+### 5 Data Transfer Rate
+
+To find the rate messages are sent, the command is looped:
+
+```python
+i = 0;
+
+while i < 10:
+    result = ble.send_command(CMD.GET_TIME_MILLIS, "")
+    i += 1;
+```
+
+The following times are printed by the notification handler:
+
+![](/lab1/10loop.png)
+
+The average time between messages sent was ~97 ms, or 10 hz. Each 9-character message sends 10 bytes (1 per character, and \0), resulting in a data rate of ~100 bytes/second.
+
+### 6 Sending Time
+
+The maximum size of a characteristic value is 150 bytes. Leaving one byte for \0, 16 9-character messages can be sent in an array that stores time data.
+
+The time and temperature arrays are initialized as global variables.
+
+```c++
+const int maxSize = 50;
+unsigned long timeArray[maxSize];
+unsigned long tempArray[maxSize];
+```
+
+A helper function *make_arrays* is used to fill these arrays.
+
+
+```c++
+void make_arrays() {
+
+  unsigned long m;
+  float temp;
+
+  int currentSize = 0;
+
+  int i = 0;
+  while (i < maxSize) {
+    m = millis();
+    temp = getTempDegF();
+    Serial.println(m);
+    timeArray[i] = m;
+    tempArray[i] = temp;
+    i++;
+  }
+}
+```
+
+```c++
+case SEND_TIME_DATA:
+      {
+        make_arrays();
+
+        for (int i = 0; i < maxSize; i++) {
+          tx_estring_value.clear();
+          tx_estring_value.append("T:");
+          tx_estring_value.append(String(timeArray[i]).c_str());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+        }
+
+        break;
+      }
+```
+
+The notification handler stores received values in an array. All 50 values are printed:
+
+![](/lab1/times.png)
+
+### 7 Sending Temperature 
+
+A similar command is written to send both time and temperature:
+
+```c++
+case GET_TEMP_READINGS:
+      {
+
+        make_arrays();
+        
+        for (int i = 0; i < maxSize; i++) {
+          tx_estring_value.clear();
+          tx_estring_value.append("T:");
+          tx_estring_value.append(String(timeArray[i]).c_str());
+          tx_estring_value.append("; ");
+          tx_estring_value.append(String(tempArray[i]).c_str());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+        }
+
+        break;
+      }
+```
+
+```python
+times = [];
+temps = [];
+
+def notification_handler(uuid, byte_array):    
+    result = ble.bytearray_to_string(byte_array)
+    extract = result.split(";")
+    t1 = extract[0][2:]
+    t2 = extract[1]
+    times.append(t1)
+    temps.append(t2)
+```
+
+![](/lab1/temps.png)
+
+### 8 Method Comparison
+
+Comparing the message transfer methods in Part 5 vs. 6/7, the first method is much slower as it must wait to receive data before sending each separate command. However, it could be used in closed-loop cases, where the commands are sent depending on the received data.
+In method 2, it takes ~1.06 ms between each message, and is therefore useful in open-loop cases. The IDE output shows that "Global variables use 30552 bytes (7%) of dynamic memory", leaving 353448 bytes. If each time + temperature message takes 13 bytes, then ~27000 data points of each can be stored.
+
+
+### Additional Task: Effective Data Rate and Overhead
+
+To determine if the size of messages affect overhead, a command that echoes back the varying message sizes sent from the computer was written. 
+
+```c++
+ case MESSAGE:
+      {
+        int t;
+        t = millis() % 1000;
+
+        char char_arr[MAX_MSG_SIZE];
+
+        success = robot_cmd.get_next_value(char_arr);
+
+        tx_estring_value.clear();
+        tx_estring_value.append(String(t).c_str());
+        tx_estring_value.append(";");
+        tx_estring_value.append(char_arr);
+
+        tx_characteristic_string.writeValue(tx_estring_value.c_str());
+
+        break;
+      }
+```
+
+```python
+def notification_handler(uuid, byte_array):    
+    m = ble.bytearray_to_string(byte_array)
+
+    print(m)
+
+    t = m.split(";")[0]
+    times.append(t)
+
+    s = len(m)
+    sizes.append(s)
+```
+
+
+The differences  between two consecutive commands were calculated normalized to match the 120 byte size (ex. the 5-byte message rate was multiplied by 24) and the plotted results are shown below. We can conclude that sending one large message is more efficient than many small messages.
+
+```python
+message_size = [];
+rate = [];
+
+i = 0
+while i < len(sizes):
+    normalize = 120/sizes[i]
+    message_size.append(sizes[i])
+    rate.append(normalize*((int(times[i + 1]) - int(times[i]))))
+    i += 2
+```
+
+![](/lab1/normalized.png)
+
+### Additional Task: Reliability
+
+To test whether the computer can read all data published at high rates, a new command is written to send messages in the magnitude of microseconds.
+
+```c++
+case FAST:
+      {
+        int rate;
+        success = robot_cmd.get_next_value(rate);
+        if (!success)
+          return;
+
+        int i = 0;
+        while (i < 100) {
+          delayMicroseconds(rate);
+          tx_estring_value.clear();
+          tx_estring_value.append(String(i).c_str());
+          tx_characteristic_string.writeValue(tx_estring_value.c_str());
+          i++;
+        }
+        break;
+      }
+```
+
+When calling the command:
+```python
+messages = [];
+def notification_handler(uuid, byte_array):    
+    m = ble.bytearray_to_string(byte_array)
+    messages.append(m)
+
+ble.send_command(CMD.FAST, 1)
+```
+
+We print the data and see that every iteration is succesfully received.
+
+![](/lab1/quicksend.png)
+
+However, the message array visually takes ~2 seconds to fill, suggesting that data rate is slower than the commanded 1 microsecond and is therefore limited by the Artemis. 
