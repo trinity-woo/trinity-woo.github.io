@@ -4,6 +4,7 @@ date = 2026-02-03
 template = "page.html"
 +++
 
+
 Adding the IMU, storing data, and setting up the RC car! <!-- more -->
 
 ## Lab 2
@@ -154,20 +155,95 @@ We observe that the main loop is run every ~1.3 ms, which is 10x faster than the
 
 ### Accelerometer
 
-The following equations were used to convert accelerometer data into pitch and roll in degrees:
+After receiving the IMU data over bluetooth, a notification handler is set up to extract the accelerometer data. The following equations from *Sensors II Lecture* were used to convert accelerometer data into pitch and roll in degrees:
 
-```c++
-theta = atan2(a_x, a_z) * 180/math.pi
-phi = atan2(a_y, a_z) * 180/math.pi
+```python
+theta = math.atan2(accX, accZ) * 180/math.pi
+phi = math.atan2(accY, accZ) * 180/math.pi
 ```
 
 
+To determine the accuracy of the accelerometer, the output at either end of the pitch and roll ranges is determined. A flat edge was used to ensure perfect angles.
 
-Image of output at {-90, 0, 90} degrees for pitch and roll (include equations)
-Accelerometer accuracy discussion
-Noise in the frequency spectrum analysis
-Include graphs for your fourier transform
-Discuss the results
+The individual output of the pitch and roll at 90 and -90 degrees is shown:
+
+![](/lab2/pitch90.png) ![](/lab2/pitch-90.png) ![](/lab2/roll90.png) ![](/lab2/roll-90.png)
+
+With a two-point calibration, we calculate the conversion factor to be 90/88.2 or ~1.02. The completed notification handler is shown below:
+
+```python
+def notification_handler(uuid, byte_array):
+
+    m = ble.bytearray_to_string(byte_array)
+
+    extract = m.strip().split(';')
+
+    time = extract[0].split(':')[1]
+
+    acc_values = extract[1].split(':')[1].split(',')
+    accX, accY, accZ = [float(v.strip()) for v in acc_values]
+    
+
+    theta = math.atan2(accX, accZ) * 180/math.pi
+    phi = math.atan2(accY, accZ) * 180/math.pi
+
+
+    print("theta: ", theta*conversion, "phi: ", phi*conversion)
+```
+
+The output of moving the IMU -90 degrees in pitch and 90 degrees in roll is shown: 
+
+![](/lab2/-9090.png)
+
+
+Next, we analyze the noise produced by the accelerometer data and perform a Fourier Transform. First, the IMU data lying flat on the table is graphed:
+
+![](/lab2/imu_graph.png)
+
+Then, a Fourier transform is applied and the results are graphed:
+
+```python
+N = int(wait * sample_rate)
+
+theta = np.array(theta_list)
+t = np.array(times)
+
+freq_data = fft(theta_list)
+y = 2/N * np.abs (freq_data [0:int (N/2)])
+```
+
+![](/lab2/ftpitch.png)
+![](/lab2/ftroll.png)
+
+From observation, the cutoff frequency $f\_c$ is picked to be 3 hz to mitigate the beginning peaks. A too high cutoff frequency reduces more noise, but may block out wanted signals in which the car experiences sharp changes in angle or turns. To apply a low pass filter, the $\alpha$ value is calculated from the equations, where T represents the inverse of the sampling rate: 
+
+$$
+\alpha = \frac{T + RC}{T}
+$$
+
+$$
+f\_c = \frac{1}{2\pi RC}
+$$
+
+$\alpha$ is found to be 0.2498.
+
+The new low pass filter values are calculated and graphed:
+
+```python
+theta_lpf = np.zeros_like(theta_raw)
+phi_lpf   = np.zeros_like(phi_raw)
+
+theta_lpf[0] = theta_raw[0]
+phi_lpf[0]   = phi_raw[0]
+
+for n in range(1, len(theta_raw)):
+    theta_lpf[n] = alpha * theta_raw[n] + (1 - alpha) * theta_lpf[n-1]
+    phi_lpf[n]   = alpha * phi_raw[n]   + (1 - alpha) * phi_lpf[n-1]
+```
+
+![](/lab2/lpf.png)
+
+The low pass filter drastically reduces the noise in the pitch and roll values.
 
 ### RC Car
 
@@ -175,3 +251,10 @@ Discuss the results
 
 extremely sensitive to controls, difficult to turn precisely (even one tap makes it turn 90 degrees), accelerates quickly to max speed
 easily flips over when running into an obstacle
+
+### Collaborations
+
+website for sampling data (how to collect the accelerometer and gyroscope data)
+chat for setting up notification handler, extracting and plotting the data
+
+https://www.alphabold.com/fourier-transform-in-python-vibration-analysis/ for plotting Fourier transform

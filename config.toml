@@ -21,6 +21,7 @@ header_menu_name = "menu_name"
 
 disable_default_favicon = true
 
+math = true
 
 [extra.menus]
 menu_name = [
@@ -57,7 +58,6 @@ header_dark_color = "#181926"
 [markdown]
 
 [markdown.highlighting]
-error_on_missing_language = true
 style = "inline"
 light_theme = "github-light"
 dark_theme = "github-dark"
