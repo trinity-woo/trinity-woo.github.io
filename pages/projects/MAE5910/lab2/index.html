@@ -1,0 +1,372 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 2: Inertial Measurement Unit | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 2: Inertial Measurement Unit" />
+  <meta name="description" content="Adding the IMU, storing data, and setting up the RC car!&amp;hellip;" />
+  <meta property="og:description" content="Adding the IMU, storing data, and setting up the RC car!&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab2/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab2/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-02-03T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 2: Inertial Measurement Unit</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-02-03T00:00:00+00:00">2026-02-03</time><span
+        class="middot"></span><time
+    datetime="PT0H6M0S">6&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#lab-2">Lab 2</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#imu-setup">IMU Setup</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#sampling-imu-data">Sampling IMU Data</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#accelerometer">Accelerometer</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#gyroscope">Gyroscope</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#rc-car">RC Car</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Adding the IMU, storing data, and setting up the RC car! <span id="continue-reading"></span></p>
+<h2 id="lab-2">Lab 2</h2>
+<h3 id="prelab">Prelab</h3>
+<h3 id="imu-setup">IMU Setup</h3>
+<p>The IMU and Artemis were connected as shown below:</p>
+<img src="/lab2/setup.jpg" alt="setup" width="400"/>
+<p>The <em>Example1_Basics</em> code was run, and the IMU data was succcesfully output to the Serial Monitor:</p>
+<p><video src="/lab2/imu_example.webm" muted loop autoplay></video></p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> AD0_VAL</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span></span></code></pre>
+<p>This value represents the address of the I<sup>2</sup>C, as shown in the datasheet, and it was set to 1, the default value. Soldering or closing the ADR jumper would change the value to 0.</p>
+<p>The sensor values were read as I accelerated and rotated the board in each axis direction.</p>
+<p>The accelerometer values increased when accelerating in the x and y directions. The z value remained constant due to gravity.</p>
+<p><img src="/lab2/acc_x.png" alt="" />
+<img src="/lab2/acc_y.png" alt="" /></p>
+<p>Additionally, when the board was flipped, the z direction, gravity, also flipped in value.</p>
+<p><img src="/lab2/acc_flipped.png" alt="" /></p>
+<p>The gyrometer values increased when rotating in the x, y, and z directions.</p>
+<p><img src="/lab2/gyro_x.png" alt="" />
+<img src="/lab2/gyro_y.png" alt="" />
+<img src="/lab2/gyro_z.png" alt="" /></p>
+<p>To indicate that the board is running, the Artemis' LED was blinked 3 times in the <em>void setup()</em> function:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  pinMode</span><span>(</span><span>LED_BUILTIN</span><span>,</span><span> OUTPUT</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>;</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    digitalWrite</span><span>(</span><span>LED_BUILTIN</span><span>,</span><span> HIGH</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    delay</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1000</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    digitalWrite</span><span>(</span><span>LED_BUILTIN</span><span>,</span><span> LOW</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    delay</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1000</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  }</span></span></code></pre><h3 id="sampling-imu-data">Sampling IMU Data</h3>
+<p>To start or stop IMU data recording, the <em>COLLECT_IMU</em> case sets the global variable <em>collectIMU</em> to 1 or 0 depending on the sent command.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> COLLECT_IMU: </span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      int</span><span> collect</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>collect</span><span>)</span><span>;</span><span> </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collect</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>        collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>        collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      break</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span></code></pre>
+<p>The main loop continuously runs the <em>get_IMU()</em> helper function, which checks if the IMU data is ready to be collected, and stores it if so.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">if</span><span> (</span><span>collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">&amp;&amp;</span><span> myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">dataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> (</span><span>curIMU </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> (</span><span>maxSize </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>)</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">      get_IMU</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span></code></pre>
+<p>I decided to store the data in separate arrays for the accelerometer and gyroscope, as it would be easier to parse and analyze the data. Additionally, they are stored as floats since converting the raw data to pitch, roll, and yaw will output decimal values. Although a double would be more precise, it would consume twice as much memory, and the float precision is sufficient for our purposes.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> get_IMU</span><span>(</span><span>)</span><span> {</span><span> </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> t</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">getAGMT</span><span>(</span><span>)</span><span>;</span><span>  </span></span>
+<span class="giallo-l"><span>    t </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span><span>    </span></span>
+<span class="giallo-l"><span>    timeArray</span><span>[</span><span>curIMU</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> t</span><span>;</span></span>
+<span class="giallo-l"><span>    accArray</span><span>[</span><span>curIMU</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">accX</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    accArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">accY</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    accArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">accZ</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    gyroArray</span><span>[</span><span>curIMU</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">gyrX</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    gyroArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">gyrY</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    gyroArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">gyrZ</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>timeArray</span><span>[</span><span>curIMU</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Acc:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>accArray</span><span>[</span><span>curIMU</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>accArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>accArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Gyro:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>curIMU</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>curIMU</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    curIMU </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>By setting up a simple notification handler that prints the received message, and sending the command to collect data for 5 seconds:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>ble</span><span>.</span><span>send_command</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">COLLECT_IMU</span><span>)</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span></span>
+<span class="giallo-l"><span>time</span><span>.</span><span>sleep</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">5</span><span>)</span></span>
+<span class="giallo-l"><span>ble</span><span>.</span><span>send_command</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">COLLECT_IMU</span><span>)</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span></span></code></pre>
+<p>The following IMU data is printed:</p>
+<p><video src="/lab2/5seconddata.webm" muted loop autoplay></video></p>
+<p>We observe that the IMU data is produced every ~10 ms. Each loop of data sent contains 7 float values (or 28 bytes), we can store around 12500 values from the 350000 bytes of dynamic memory, or ~125 seconds of data collection.</p>
+<p>By running a Serial.print command through the main loop:</p>
+<p><img src="/lab2/mainloop.png" alt="" /></p>
+<p>We observe that the main loop is run every ~1.3 ms, which is 10x faster than the rate of the IMU.</p>
+<h3 id="accelerometer">Accelerometer</h3>
+<p>After receiving the IMU data over bluetooth, a notification handler is set up to extract the accelerometer data. The following equations from lecture were used to convert accelerometer data into pitch and roll in degrees:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>theta</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> math</span><span>.</span><span>atan2</span><span>(</span><span>accX</span><span>,</span><span> accZ</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>math</span><span>.</span><span>pi</span></span>
+<span class="giallo-l"><span>phi</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> math</span><span>.</span><span>atan2</span><span>(</span><span>accY</span><span>,</span><span> accZ</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>math</span><span>.</span><span>pi</span></span></code></pre>
+<p>To determine the accuracy of the accelerometer, the output at either end of the pitch and roll ranges is determined. A flat edge was used to ensure perfect angles.</p>
+<p>The individual output of the pitch and roll at 90 and -90 degrees is shown:</p>
+<p><img src="/lab2/pitch90.png" alt="" /> <img src="/lab2/pitch-90.png" alt="" /> <img src="/lab2/roll90.png" alt="" /> <img src="/lab2/roll-90.png" alt="" /></p>
+<p>With a two-point calibration, we calculate the conversion factor to be 90/88.2 or ~1.02. The completed notification handler is shown below:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    m</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    extract</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> m</span><span>.</span><span>strip</span><span>(</span><span>)</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    time</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> extract</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">:</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>)</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    acc_values</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> extract</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">:</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>)</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">,</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>    accX</span><span>,</span><span> accY</span><span>,</span><span> accZ</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span style="color: light-dark(#005CC5, #79B8FF);">float</span><span>(</span><span>v</span><span>.</span><span>strip</span><span>(</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> for</span><span> v</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span> acc_values</span><span>]</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    theta</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> math</span><span>.</span><span>atan2</span><span>(</span><span>accX</span><span>,</span><span> accZ</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>math</span><span>.</span><span>pi</span></span>
+<span class="giallo-l"><span>    phi</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> math</span><span>.</span><span>atan2</span><span>(</span><span>accY</span><span>,</span><span> accZ</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>math</span><span>.</span><span>pi</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">    print</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">theta: </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span><span> theta</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>conversion</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">phi: </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span><span> phi</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>conversion</span><span>)</span></span></code></pre>
+<p>The output of moving the IMU -90 degrees in pitch and 90 degrees in roll is shown:</p>
+<p><img src="/lab2/-9090.png" alt="" /></p>
+<p>Next, we analyze the noise produced by the accelerometer data and perform a Fourier Transform. First, the IMU data lying flat on the table is graphed:</p>
+<p><img src="/lab2/imu_graph.png" alt="" /></p>
+<p>Then, a Fourier transform is applied and the results are graphed:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>N</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> int</span><span>(</span><span>wait</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> sample_rate</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>theta</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>theta_list</span><span>)</span></span>
+<span class="giallo-l"><span>t</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>times</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>freq_data</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> fft</span><span>(</span><span>theta_list</span><span>)</span></span>
+<span class="giallo-l"><span>y</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>N</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>abs</span><span> (</span><span>freq_data</span><span> [</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>:</span><span style="color: light-dark(#005CC5, #79B8FF);">int</span><span> (</span><span>N</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>)</span><span>]</span><span>)</span></span></code></pre>
+<p><img src="/lab2/ftpitch.png" alt="" />
+<img src="/lab2/ftroll.png" alt="" /></p>
+<p>From observation, the cutoff frequency $f_c$ is picked to be 3 hz to mitigate the beginning peaks. A too high cutoff frequency reduces more noise, but may block out wanted signals in which the car experiences sharp changes in angle or turns. To apply a low pass filter, the $\alpha$ value is calculated from the equations, where T represents the inverse of the sampling rate:</p>
+<p>$$
+\alpha = \frac{T + RC}{T}
+$$</p>
+<p>$$
+f_c = \frac{1}{2\pi RC}
+$$</p>
+<p>$\alpha$ is found to be 0.2498.</p>
+<p>The new low pass filter values are calculated and graphed:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>theta_lpf</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>zeros_like</span><span>(</span><span>theta_raw</span><span>)</span></span>
+<span class="giallo-l"><span>phi_lpf</span><span style="color: light-dark(#D73A49, #F97583);">   =</span><span> np</span><span>.</span><span>zeros_like</span><span>(</span><span>phi_raw</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>theta_lpf</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> theta_raw</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span></span>
+<span class="giallo-l"><span>phi_lpf</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">   =</span><span> phi_raw</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> n</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>theta_raw</span><span>)</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    theta_lpf</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> alpha</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> theta_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> alpha</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> theta_lpf</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"><span>    phi_lpf</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">   =</span><span> alpha</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> phi_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">   +</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> alpha</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> phi_lpf</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span></code></pre>
+<p><img src="/lab2/lpf.png" alt="" /></p>
+<p>The low pass filter drastically reduces the noise in the pitch and roll values.</p>
+<h3 id="gyroscope">Gyroscope</h3>
+<p>Next, the pitch, roll, and yaw angles are computed from the gyroscope data. We use the following equation from lecture to loop through and plot the data (note that the accelerometer-defined pitch, roll, and yaw correspond to the negative of the gyro's roll, yaw, and pitch):</p>
+<p>$$
+\theta_g = \theta_g + gyro\_reading*dt
+$$</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> n</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>gyroX_raw</span><span>)</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    dt</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> time_sec</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> time_sec</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"><span>    gyro_pitch</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> gyro_pitch</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> gyroY_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>dt</span></span>
+<span class="giallo-l"><span>    gyro_roll</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> gyro_roll</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> gyroZ_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>dt</span></span>
+<span class="giallo-l"><span>    gyro_yaw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> gyro_yaw</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> gyroX_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>dt</span></span></code></pre>
+<p><img src="/lab2/gyrodata.png" alt="" /></p>
+<p>We also plot the data when tilting the IMU:</p>
+<p><img src="/lab2/lpf2.png" alt="" />
+<img src="/lab2/gyrodata2.png" alt="" /></p>
+<p>Comparing the gyroscope angles to the above low pass filter graph, we observe that there is lower noise, but the readings began to drift after a few seconds. Therefore, we apply a complementary filter and compare it to the accelerometer's low pass filter:</p>
+<p>$$
+\theta = (\theta + \theta_g)(1-\alpha) + \theta_a\alpha
+$$</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> n</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>gyroX_raw</span><span>)</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    cgyro_pitch</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>cgyro_pitch</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> gyroY_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>dt</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>alpha</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> theta_lpf</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span>alpha</span><span>)</span></span>
+<span class="giallo-l"><span>    cgyro_roll</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">  =</span><span> (</span><span>cgyro_roll</span><span>[</span><span>n</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">  +</span><span> gyroZ_raw</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>dt</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>alpha</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> phi_lpf</span><span>[</span><span>n</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span>alpha</span><span>)</span></span></code></pre>
+<p><img src="/lab2/complementary.png" alt="" /></p>
+<p>We observe that the low pass and complementary filter data largely overlap each other, and are therefore accurate measurements. The gyroscope's complementary filter is also more stable than the accelerometer's low pass filter.</p>
+<p>10 seconds of data were also recorded to demonstrate the range and stability:</p>
+<p><img src="/lab2/gyrodata10s.png" alt="" /></p>
+<h3 id="rc-car">RC Car</h3>
+<p>Lastly, the RC car was remote controlled and observed.</p>
+<p><video src="/lab2/wee.MOV" muted loop autoplay></video></p>
+<p><video src="/lab2/crash.MOV" muted loop autoplay></video></p>
+<p>We see that the car is extremely sensitive to controls and is difficult to turn precisely, where even one tap on the remote control makes it turn 90 degrees. It accelerates quickly to max translational and rotational speed, and it easily flips over when running into an obstacle (the wall).</p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://correial.github.io/LuccaFastRobots/Fast%20Robots%20Stuff/lab-2/">Lucca's page</a> was referenced in how to sample the accelerometer and gyroscope data.
+<a rel="external" href="https://neverlandiz.github.io/fast_robots/">Katherine's page</a> was referenced in debugging the complementary filter and comparing graph outputs.
+ChatGPT was used to help write code for the notification handler, extracting the data, and plotting the graphs.
+<a rel="external" href="https://www.alphabold.com/fourier-transform-in-python-vibration-analysis/">This page</a> was referenced to help plot the Fourier transforms.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab1/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 1: Artemis and Bluetooth</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>
