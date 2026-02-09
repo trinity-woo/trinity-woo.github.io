@@ -13,7 +13,9 @@ Adding the IMU, storing data, and setting up the RC car! <!-- more -->
 
 ### IMU Setup
 
-(picture of IMU connections on phone)
+The IMU and Artemis were connected as shown below:
+
+<img src="/lab2/setup.jpg" alt="setup" width="400"/>
 
 The *Example1_Basics* code was run, and the IMU data was succcesfully output to the Serial Monitor:
 
@@ -155,7 +157,7 @@ We observe that the main loop is run every ~1.3 ms, which is 10x faster than the
 
 ### Accelerometer
 
-After receiving the IMU data over bluetooth, a notification handler is set up to extract the accelerometer data. The following equations from *Sensors II Lecture* were used to convert accelerometer data into pitch and roll in degrees:
+After receiving the IMU data over bluetooth, a notification handler is set up to extract the accelerometer data. The following equations from lecture were used to convert accelerometer data into pitch and roll in degrees:
 
 ```python
 theta = math.atan2(accX, accZ) * 180/math.pi
@@ -245,16 +247,64 @@ for n in range(1, len(theta_raw)):
 
 The low pass filter drastically reduces the noise in the pitch and roll values.
 
+### Gyroscope
+
+Next, the pitch, roll, and yaw angles are computed from the gyroscope data. We use the following equation from lecture to loop through and plot the data (note that the accelerometer-defined pitch, roll, and yaw correspond to the negative of the gyro's roll, yaw, and pitch):
+
+
+$$
+\theta_g = \theta_g + gyro\\_reading*dt
+$$
+
+```python
+for n in range(1, len(gyroX_raw)):
+    dt = time_sec[n] - time_sec[n-1]
+    gyro_pitch[n] = gyro_pitch[n-1] - gyroY_raw[n]*dt
+    gyro_roll[n] = gyro_roll[n-1] - gyroZ_raw[n]*dt
+    gyro_yaw[n] = gyro_yaw[n-1] - gyroX_raw[n]*dt
+```
+
+![](/lab2/gyrodata.png)
+
+We also plot the data when tilting the IMU:
+
+![](/lab2/lpf2.png)
+![](/lab2/gyrodata2.png)
+
+Comparing the gyroscope angles to the above low pass filter graph, we observe that there is lower noise, but the readings began to drift after a few seconds. Therefore, we apply a complementary filter and compare it to the accelerometer's low pass filter:
+
+$$
+\theta = (\theta + \theta_g)(1-\alpha) + \theta_a\alpha
+$$
+
+```python
+for n in range(1, len(gyroX_raw)):
+    cgyro_pitch[n] = (cgyro_pitch[n-1] + gyroY_raw[n]*dt)*alpha + theta_lpf[n]*(1-alpha)
+    cgyro_roll[n]  = (cgyro_roll[n-1]  + gyroZ_raw[n]*dt)*alpha + phi_lpf[n]*(1-alpha)
+```
+
+![](/lab2/complementary.png)
+
+We observe that the low pass and complementary filter data largely overlap each other, and are therefore accurate measurements. The gyroscope's complementary filter is also more stable than the accelerometer's low pass filter.
+
+10 seconds of data were also recorded to demonstrate the range and stability:
+
+![](/lab2/gyrodata10s.png)
+
+
 ### RC Car
 
-!!videos on ipad
+Lastly, the RC car was remote controlled and observed. 
 
-extremely sensitive to controls, difficult to turn precisely (even one tap makes it turn 90 degrees), accelerates quickly to max speed
-easily flips over when running into an obstacle
+<video src="/lab2/wee.MOV" muted loop autoplay></video>
+
+<video src="/lab2/crash.MOV" muted loop autoplay></video>
+
+We see that the car is extremely sensitive to controls and is difficult to turn precisely, where even one tap on the remote control makes it turn 90 degrees. It accelerates quickly to max translational and rotational speed, and it easily flips over when running into an obstacle (the wall).
 
 ### Collaborations
 
-website for sampling data (how to collect the accelerometer and gyroscope data)
-chat for setting up notification handler, extracting and plotting the data
-
-https://www.alphabold.com/fourier-transform-in-python-vibration-analysis/ for plotting Fourier transform
+[Lucca's page](https://correial.github.io/LuccaFastRobots/Fast%20Robots%20Stuff/lab-2/) was referenced in how to sample the accelerometer and gyroscope data.
+[Katherine's page](https://neverlandiz.github.io/fast_robots/) was referenced in debugging the complementary filter and comparing graph outputs.
+ChatGPT was used to help write code for the notification handler, extracting the data, and plotting the graphs.
+[This page](https://www.alphabold.com/fourier-transform-in-python-vibration-analysis/) was referenced to help plot the Fourier transforms.
