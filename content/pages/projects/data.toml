@@ -1,7 +1,16 @@
 [[project]]
 name = "MAE 5910: Fast Robots"
 desc = "Lab write-ups for implementing autonomous robots."
-tags = ["robotics"]
+tags = ["robotics", "autonomous systems"]
 links = [
     { name = "Go to project →", url = "/pages/projects/MAE5910/" },
+]
+
+
+[[project]]
+name = "SSDS Research: Space Domain Awareness"
+desc = "Building 3DoF testbeds for flight readiness testing. Implementing attitude control flight software and propulsion integration."
+tags = ["GNC", "flight software"]
+links = [
+    { name = "Go to project →", url = "/pages/projects/SSDS/" },
 ]
