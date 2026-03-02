@@ -142,7 +142,7 @@ distanceSensorSide.setI2CAddress(0x30);
 
 ```
 
-The data is succesfully printed from both sensors:
+The data is successfully printed from both sensors:
 
 <video src="/lab3/dualtof.webm" muted loop autoplay></video>
 
