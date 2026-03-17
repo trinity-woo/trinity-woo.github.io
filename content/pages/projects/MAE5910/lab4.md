@@ -230,7 +230,7 @@ void settle_turn() {
 }
 ```
 
-As shown in the videos below, once the LED turns on, it takes ~2 seconds for the car to settle at the slowest speed.
+As shown in the videos below, once the car switches to the lower PWM value and the LED turns on, it takes ~2 seconds for the car to settle at the slowest speed.
 
 <video src="/lab4/settle_forward.mp4" loop controls></video>
 <video src="/lab4/settle_turn.mp4" loop controls></video>
