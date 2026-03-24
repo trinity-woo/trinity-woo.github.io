@@ -6,8 +6,6 @@ template = "page.html"
 
 Orientation PID with the IMU! <!-- more -->
 
-Lab unfinished due to hardware issues D:
-
 ### Prelab
 
 First, to improve the sampling rate from Lab 5, I stored all the values into arrays and created a *send_data* function that loops through and sends them over Bluetooth. This significantly improved the performance of the PID control, running at ~100 hz and much faster than the sensor rate:
@@ -102,7 +100,6 @@ while (!success) {
     success &= (myICM.enableDMPSensor(INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR) == ICM_20948_Stat_Ok);
 
     success &= (myICM.setDMPODRrate(DMP_ODR_Reg_Quat6, 0) == ICM_20948_Stat_Ok);
-  }
 }
 ```
 
@@ -139,7 +136,13 @@ Now, there is much less drift, varying around +- 0.5 degrees while keeping the c
 
 ![](/lab6/gyrodmp.png)
 
-For gyroscope limitations, the maximum rotational speed it can read is 2000 degrees per second, or ~5.5 full rotations per second. Although this can be configured in the library's *GYRO_CONFIG_1*, the default value is sufficiently high for our purposes. The PID control and mapping will likely not require over 2 full rotations per second.
+The real-time output of the yaw angle is shown below and appears to be extremely accurate and quick to update:
+
+<video src="/lab6/dmp.mp4" controls muted></video>
+
+#### Gyroscope Limitations
+
+The maximum rotational speed the gyroscope can read is 2000 degrees per second, or ~5.5 full rotations per second. Although this can be configured in the library's *GYRO_CONFIG_1*, the default value is sufficiently high for our purposes. The PID control and mapping will likely not require over 2 full rotations per second.
 
 The sampling rate was tested with Serial print commands:
 
@@ -149,12 +152,13 @@ We observe that the gyroscope's sampling rate is around every ~65 ms, or ~15 hz.
 
 #### PID Control
 
-A *CHANGE_SETPOINTS* command was written to change the       desired distance and angle over Bluetooth.
+A *CHANGE_SETPOINTS* command was written to change the desired distance and angle over Bluetooth.
 
-Overall, the angle PID structure was similar to that of the linear PID's flags and functions. Gain values for angular control (Kpa, Kia, and Kda) were initialized, and a function *PID_angle_control* was written to output PWM values with PID control. 
+Overall, the angle PID structure was similar to that of the linear PID's flags and functions. Gain values for angular control (Kpa, Kia, and Kda) were initialized, and a function *PID_angle_control* was written to output PWM values with PID control.
 
 Similarly to the linear control, the derivative term included a lowpass filter and eliminating the derivative kick. The yaw is based off of the quaternion measurements, so it is reasonable to take its derivative. Wind-up protection was implemented similar to Lab 5, constraining the integral PID component.
 
+To prevent the car from rotating the long direction (for example, going from 1 to 359 degrees, we simply want to rotate -2 degrees), we map the *dInput* to [-180, 180] which represents the shortest path between two angles. The same is done for *errorCur*.
 
 ```c++
 float last_filtered_d_angle = 0;
@@ -165,7 +169,7 @@ float PID_angle_control() {
   
   int t = millis();
 
-  float tCur = micros() / 1000000.0;  // seconds
+  float tCur = micros() / 1000000.0; 
 
   float angleCurrent = gyro_yaw;
   float errorCur = angleCurrent - angleWanted;
@@ -195,33 +199,67 @@ float PID_angle_control() {
   tPrev = tCur;
   errorPrev = errorCur;
 }
-
 ```
 
-Then, the main loop commands the car to turn left or right using those PWM values.
+Bluetooth commands the angular PID on/off. If turned off, the motors stop and the Arduino sends all its array data at once over Bluetooth. Although this results in some waiting, I found that the trade-off is worth it compared to the low frequency from real-time sending.
 
 ```c++
-if (collectPIDangle) {
+    case COLLECT_PIDANGLE:
+      {
+        int collect;
+
+        success = robot_cmd.get_next_value(collect);
+        if (!success)
+          return;
+
+        if (collect) {
+          collectIMU = 1;
+          collectPIDangle = 1;
+          errorSum = 0;
+          errorPrev = 0;
+
+          tPrev = micros() / 1000000.0;
+
+          bool success = 0;
+
+          while (!success) {
+            success = (myICM.resetFIFO() == ICM_20948_Stat_Ok);
+          }
+
+        } else {
+          collectIMU = 0;
+          collectPIDangle = 0;
+          stop();
+          if (send) {
+            send_data();
+          }
+        }
+      }
+```
+
+The main loop commands the car to turn left or right using those PWM values. I implemented a low angle tolerance of 1 degree.
+
+```c++
+      if (collectPIDangle) {
         pwm = PID_angle_control();
         get_PID();
 
         int pwm_max = 255 * Spa;
 
-        int pwm_min = 150;
+        int pwm_min = 100;
         int abs_pwm = abs(pwm) * pwm_max / 100;
-        //Serial.println("abs pwm: ");
-        //Serial.println(abs_pwm);
 
-        if (abs(pwm) < pwm_angle_tolerance) {
+        if (abs(errorCur) < pwm_angle_tolerance) {
           driveState = STOP;
-          //Serial.println("stopped");
+
         } else {
 
           if (abs_pwm > pwm_max) abs_pwm = pwm_max;
           if (abs_pwm < pwm_min) abs_pwm = pwm_min;
 
-          if (pwm > 0) driveState = RIGHT;
-          else driveState = LEFT;
+          if (pwm > 1) driveState = RIGHT;
+          else if (pwm < -1) driveState = LEFT;
+          else driveState = STOP;
         }
 
         switch (driveState) {
@@ -231,6 +269,19 @@ if (collectPIDangle) {
           case RIGHT: right(abs_pwm); break;
           case STOP: stop(); break;
         }
+      }
+```
+
+While testing the *stop* function, I noticed that the right motor would have a delayed stop, around ~0.5 seconds after the left motor. Therefore, I implemented active braking:
+
+```c++
+void stop() {
+
+  analogWrite(LEFT_1, 255);
+  analogWrite(LEFT_2, 255);
+
+  analogWrite(RIGHT_1, 255);
+  analogWrite(RIGHT_2, 255);
 }
 ```
 
@@ -239,21 +290,41 @@ if (collectPIDangle) {
 A procedure similar to that of Lab 5 was followed and the following gains were chosen:
 
 ```python
-Kp = 0.05
-Ki = 0.001
-Kd = 0.12
-Sp = 0.5
+Kp = 0.06
+Ki = 0.002
+Kd = 0.05
+Sp = 0.9
 dalpha = 0.15
 ```
 
-To help the debugging process, graphs of the set desired angle, the measured angle, and the PWM values were created: 
+I first started with 0 Ki and Kd, and increased the Kp until the car started oscillating about an angle. To help eliminate steady state error, I slowly increased Ki until the system reached instability. I sent commands between 0 and 90 degrees to test wide turns. Kd was added to decrease disturbances, where I poked the side of the car.
+
+To help the debugging process, graphs of the set desired angle, the measured angle, and the PWM values were created. 
 
 ![](/lab6/graph1.png)
 ![](/lab6/graph2.png)
 
+A successful trial and the resulting data is shown below, testing the angle commands with various sized jumps: 
+
+<video src="/lab6/trial3.mov" controls></video>
+
+![](/lab6/trial1.png)
+
+Note that the graph jumps when wrapping around from either the 180 or -180 end. Since this was a visual problem and does not affect the performance of the car, I decided to fix this in future labs.
+
+#### Comparison without Wind-up Protection
+
+The attempt below demonstrates the effect of the car without the wind-up protection:
+
+<video src="/lab6/nowindup.mov" controls></video>
+
+![](/lab6/nowindup.png)
+![](/lab6/nowinduppwm.png)
+
+The effects of overshoot are much more apparent as the integral term is no longer constrained. This is further shown in the PWM graph (which actually displays the PID control output u) with much higher values. Therefore, windup is necessary to prevent the car from spiraling out of control and spinning indefinitely with large overshoots.
 
 ### Collaborations
 
 [Stephan's site](https://fast.synthghost.com/lab-5-linear-pid-control/) was referenced for implementing the IMU digital motion processor and fixing the yaw drift.
 
-ChatGPT was used for debugging the *send_data* function and graphing data.
+ChatGPT was used for debugging the *send_data* function, notification handlers, and graphing data.
