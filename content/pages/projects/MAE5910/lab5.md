@@ -120,6 +120,7 @@ Then, in the main loop, while *collectPID* is on, the u value is scaled into a P
         } else if (abs_pwm > pwm_tolerance && abs_pwm < pwm_min) {
           abs_pwm = pwm_min;
         }
+      }
 ```
 
 The Kp value was increased until oscillation at 0.08.
