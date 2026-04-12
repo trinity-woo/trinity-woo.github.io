@@ -115,7 +115,7 @@ Note that the PWM values alternate between the minimum value to overcome frictio
 
 ### Creating Inertial Reference Frame Map
 
-To convert our polar measurements into a cartesian map, we use this transformation matrix:
+To convert our polar measurements into a cartesian map, we use this transformation matrix (only 2D is required since the car does not rotate or translate in the z direction):
 
 $$
 \begin{bmatrix}
