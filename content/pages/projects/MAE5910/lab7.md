@@ -149,10 +149,10 @@ I decided on the final values of 80 for $\sigma_1$ and $\sigma_2$, and 25 for $\
 ![](/lab7/kalmanfinal.png)
 
 Additional factors that affect the Kalman Filter include:
-- The drag and momentum terms, which the A and B matrices build on.
+- The drag and momentum terms, which the A and B matrices build on. It is essential to ensure that these terms match the system for an accurate prediction.
 - The sampling time delta_t. An increase in sampling time corresponds to less trust in the sensor data.
 - The sampling time of the PWM/PID loop, which affects the extrapolated ToF sampling time in the simulated version.
-- THe initial x value, which takes the first ToF sensorvalue in the simulated version, but depends on the ToF sampling time in the live version.
+- THe initial x value, which takes the first ToF sensorvalue in the simulated version, but depends on the ToF sampling time in the live version. 
 
 ### Implementing Kalman Filter (Robot)
 
@@ -279,7 +279,7 @@ Sp = 0.6
 
 This trial only reaches a max PWM of ~80, but stops without oscillation. 
 
-Since the car tends to overshoot the distance goal, improvements could include increasing the deadband range or decreasing the minimum PWM value.
+Since the car tends to overshoot the distance goal, improvements could include increasing the deadband range, decreasing the minimum PWM value, and starting the Kalman Filter only after the x matrix is initialized.
 
 ### Collaborations
 
