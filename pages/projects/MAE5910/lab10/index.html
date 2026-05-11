@@ -1,0 +1,327 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 10: Grid Localization using Bayes Filter | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 10: Grid Localization using Bayes Filter" />
+  <meta name="description" content="Simulated grid localization!&amp;hellip;" />
+  <meta property="og:description" content="Simulated grid localization!&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab10/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab10/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-04-12T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 10: Grid Localization using Bayes Filter</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-04-12T00:00:00+00:00">2026-04-12</time><span
+        class="middot"></span><time
+    datetime="PT0H4M0S">4&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#grid-localization">Grid Localization</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#running-the-bayes-filter">Running the Bayes Filter</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Simulated grid localization! <span id="continue-reading"></span></p>
+<h3 id="prelab">Prelab</h3>
+<p>The simulation environment is first set up to control a virtual robot. The environment consists of three components:</p>
+<ul>
+<li>The simulator, containing the virtual robot, odometry estimates using IMU data, and the ground truth</li>
+<li>A live 2D plotter</li>
+<li>A programmable controller</li>
+</ul>
+<p>Inside of the (FastRobots_ble) virtual environment, commands are run to install packages:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>  python</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span>m</span><span> pip</span><span> install</span><span> numpy</span><span> pygame</span><span> pyqt6</span><span> pyqtgraph</span><span> pyyaml</span><span> ipywidgets</span><span> colorama</span></span></code></pre>
+<p>Running <em>python -m tkinter</em> shows that tkinter is set up correctly:</p>
+<p><img src="/lab10/tkinter.png" alt="" /></p>
+<p>Then, I downloaded the (pip wheel)[https://pypi.org/project/Box2D/#files] according to my OS and Python version, placed the <em>.whl</em> file into my <em>MAE 5910</em> directory, and installed it. Printing the version shows that it was correctly installed:</p>
+<p><img src="/lab10/install.png" alt="" /></p>
+<p>The <em>FastRobots-sim-release</em> code was downloaded and extracted into the directory. The <em>inClassDemo</em> notebook is used to control and plot the virtual robot.</p>
+<p>Open loop control was implemented to drive the robot in a square.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">while</span><span> cmdr</span><span>.</span><span>sim_is_running</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> and</span><span> cmdr</span><span>.</span><span>plotter_is_running</span><span>(</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>set_vel</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0.5</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    await</span><span> asyncio</span><span>.</span><span>sleep</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    pose</span><span>,</span><span> gt_pose</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> cmdr</span><span>.</span><span>get_pose</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_odom</span><span>(</span><span>pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_gt</span><span>(</span><span>gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>set_vel</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span> math</span><span>.</span><span>pi</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    await</span><span> asyncio</span><span>.</span><span>sleep</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    pose</span><span>,</span><span> gt_pose</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> cmdr</span><span>.</span><span>get_pose</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_odom</span><span>(</span><span>pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_gt</span><span>(</span><span>gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span></code></pre>
+<p><img src="/lab10/openloop.png" alt="" /></p>
+<p>The linear and angular velocity durations are 1 second. In the ground truth, the robot makes a pattern with an overshooting angle. However, the odometry data quickly becomes unpredictable and occupies a much larger state space.</p>
+<p>Next, closed loop with simple proportional control was implemented to perform simple obstacle avoidance.</p>
+<p>I made the virtual robot turn 90 degrees when close to an obstacle. It slows down proportionally to its distance when it is close to an obstacle (which I defined as 0.8 m). Otherwise, the robot moves at 1 m/s.</p>
+<p>Problems with obstacle avoidance included:</p>
+<ul>
+<li>There is no side ToF sensor, so the robot could avoid a front obstacle, but then turn and crash into a side wall. Ideally, there would be multiple side ToF sensors to determine whether to turn left, turn right, or to reverse.</li>
+<li>The car has width, so it could crash into or get stuck on the corner of the square obstacle, though the sensor reads a high distance.</li>
+<li>Experimenting with the gain value and decreasing it makes avoidance more consistent.</li>
+</ul>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>cmdr</span><span>.</span><span>reset_plotter</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>cmdr</span><span>.</span><span>reset_sim</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">while</span><span> cmdr</span><span>.</span><span>sim_is_running</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> and</span><span> cmdr</span><span>.</span><span>plotter_is_running</span><span>(</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tof</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> cmdr</span><span>.</span><span>get_sensor</span><span>(</span><span>)</span><span>.</span><span>item</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>    Kp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.5</span></span>
+<span class="giallo-l"><span>    close</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.8</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    if</span><span> (</span><span>tof</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> close</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        cmdr</span><span>.</span><span>set_vel</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">float</span><span>(</span><span>Kp</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>(</span><span>close</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span>tof</span><span>)</span><span>)</span><span>,</span><span> math</span><span>.</span><span>pi</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    elif</span><span> (</span><span>tof</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.1</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        cmdr</span><span>.</span><span>set_vel</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    else</span><span>:</span></span>
+<span class="giallo-l"><span>        cmdr</span><span>.</span><span>set_vel</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    await</span><span> asyncio</span><span>.</span><span>sleep</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0.5</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    pose</span><span>,</span><span> gt_pose</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> cmdr</span><span>.</span><span>get_pose</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_odom</span><span>(</span><span>pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    cmdr</span><span>.</span><span>plot_gt</span><span>(</span><span>gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> gt_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span></code></pre>
+<p><video src="/lab10/closedloop.webm" muted controls></video>
+<img src="/lab10/closedloop.png" alt="" /></p>
+<h3 id="grid-localization">Grid Localization</h3>
+<p>Grid localization is performed using Bayes Filter with several Python helper functions.</p>
+<p><em>compute_control(cur_pose, prev_pose)</em> finds the control needed to transition between two poses using geometry. Additionally, the angles are normalized to [-180,+180) degrees from the original [0, 360).</p>
+<p><img src="/lab10/odom.png" alt="" /></p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> compute_control</span><span>(</span><span>cur_pose</span><span>,</span><span> prev_pose</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    delta_rot_1</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> mapper</span><span>.</span><span>normalize_angle</span><span>(</span><span>np</span><span>.</span><span>arctan2</span><span>(</span><span>(</span><span>cur_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span><span> ,</span><span> (</span><span>cur_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    delta_trans</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>hypot</span><span>(</span><span>cur_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> cur_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    delta_rot_2</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> mapper</span><span>.</span><span>normalize_angle</span><span>(</span><span>cur_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> prev_pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> delta_rot_1</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    return</span><span> delta_rot_1</span><span>,</span><span> delta_trans</span><span>,</span><span> delta_rot_2</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>Next, the <em>odom_motion_model(cur_pose, prev_pose, u)</em> calculates the actual control using odometry readings. A Gaussian function is used to find the probability the robot can transition given the control action.</p>
+<p><img src="/lab10/gaussian.png" alt="" /></p>
+<p>In the <em>localization.py</em> file, the <em>gaussian</em> function is defined as:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    def</span><span style="color: light-dark(#6F42C1, #B392F0);"> gaussian</span><span>(</span><span>self</span><span>,</span><span> x</span><span>,</span><span> mu</span><span>,</span><span> sigma</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span> np</span><span>.</span><span>exp</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span>np</span><span>.</span><span>power</span><span>(</span><span>x</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> mu</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>np</span><span>.</span><span>power</span><span>(</span><span>sigma</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>)</span><span>)</span><span>)</span></span></code></pre>
+<p>The gaussian takes in the actual control, the predicted control, and the noise. Then, the total probability p(x'|x, u) is calculated.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> odom_motion_model</span><span>(</span><span>cur_pose</span><span>,</span><span> prev_pose</span><span>,</span><span> u</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    actual_u</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> compute_control</span><span>(</span><span>cur_pose</span><span>,</span><span> prev_pose</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    rot1u_actual</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> actual_u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span></span>
+<span class="giallo-l"><span>    transu_actual</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> actual_u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"><span>    rot2u_actual</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> actual_u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    rot1u</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span></span>
+<span class="giallo-l"><span>    transu</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"><span>    rot2u</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> u</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    p1</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> loc</span><span>.</span><span>gaussian</span><span>(</span><span>rot1u_actual</span><span>,</span><span> rot1u</span><span>,</span><span> loc</span><span>.</span><span>odom_rot_sigma</span><span>)</span></span>
+<span class="giallo-l"><span>    p2</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> loc</span><span>.</span><span>gaussian</span><span>(</span><span>transu_actual</span><span>,</span><span> transu</span><span>,</span><span> loc</span><span>.</span><span>odom_trans_sigma</span><span>)</span></span>
+<span class="giallo-l"><span>    p3</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> loc</span><span>.</span><span>gaussian</span><span>(</span><span>rot2u_actual</span><span>,</span><span> rot2u</span><span>,</span><span> loc</span><span>.</span><span>odom_rot_sigma</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    prob</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> p1</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>p2</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>p3</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    return</span><span> prob</span></span></code></pre>
+<p>Next, the Bayes Filter consists of a prediction and update step.</p>
+<p><img src="/lab10/bayes.png" alt="" /></p>
+<p>The <em>prediction_step</em>, or the first step of the Bayes Filter, finds the probability for every possible pair of previous and current poses by calling <em>odom_motion_model</em> and mapping the cell to continuous world coordiantes with <em>from_map</em>.</p>
+<p>It loops through each cell for both the previous and current poses, where states with a probability &lt; 0.0001 are skipped. The final step sums up the probabilities and stores it in the <em>bel_bar</em> 3D array, which is normalized.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> prediction_step</span><span>(</span><span>cur_odom</span><span>,</span><span> prev_odom</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    actual_u</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> compute_control</span><span>(</span><span>cur_odom</span><span>,</span><span> prev_odom</span><span>)</span></span>
+<span class="giallo-l"><span>    loc</span><span>.</span><span>bel_bar</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>zeros</span><span>(</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_X</span><span>,</span><span> mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_Y</span><span>,</span><span> mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_A</span><span>)</span><span>)</span><span>   </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    for</span><span> x1</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_X</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        for</span><span> y1</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_Y</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            for</span><span> a1</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_A</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">                if</span><span> (</span><span>loc</span><span>.</span><span>bel</span><span>[</span><span>x1</span><span>,</span><span>y1</span><span>,</span><span>a1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> &gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.0001</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">                    for</span><span> x2</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_X</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">                        for</span><span> y2</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_Y</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">                            for</span><span> a2</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_A</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>                                p</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> odom_motion_model</span><span>(</span><span>mapper</span><span>.</span><span>from_map</span><span>(</span><span>cur_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span>cur_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>,</span><span>cur_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>                                                      mapper</span><span>.</span><span>from_map</span><span>(</span><span>prev_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span>prev_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>,</span><span>prev_odom</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>)</span><span>,</span><span> </span></span>
+<span class="giallo-l"><span>                                                                      actual_u</span><span>)</span></span>
+<span class="giallo-l"><span>                                prior_belief</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> loc</span><span>.</span><span>bel</span><span>[</span><span>x1</span><span>,</span><span> y1</span><span>,</span><span> a1</span><span>]</span></span>
+<span class="giallo-l"><span>                                loc</span><span>.</span><span>bel_bar</span><span>[</span><span>x2</span><span>,</span><span>y2</span><span>,</span><span>a2</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +=</span><span> p</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>prior_belief</span></span>
+<span class="giallo-l"><span>                        </span></span>
+<span class="giallo-l"><span>    loc</span><span>.</span><span>bel_bar</span><span style="color: light-dark(#D73A49, #F97583);"> /=</span><span> np</span><span>.</span><span>sum</span><span>(</span><span>loc</span><span>.</span><span>bel_bar</span><span>)</span><span style="color: light-dark(#6A737D, #6A737D);"> #</span><span style="color: light-dark(#6A737D, #6A737D);"> normalization</span></span></code></pre>
+<p>The <em>sensor_model</em> returns an array containing the probabilities of each of the 18 sensor measurements, or p(z|x).</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> sensor_model</span><span>(</span><span>obs</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    prob_array</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>zeros</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">18</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    for</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">18</span><span>)</span><span>:</span><span>  </span></span>
+<span class="giallo-l"><span>        p</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> loc</span><span>.</span><span>gaussian</span><span>(</span><span>obs</span><span>[</span><span>i</span><span>]</span><span>,</span><span> loc</span><span>.</span><span>obs_range_data</span><span>[</span><span>i</span><span>]</span><span>,</span><span> loc</span><span>.</span><span>sensor_sigma</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span style="color: light-dark(#005CC5, #79B8FF);"> isinstance</span><span>(</span><span>p</span><span>,</span><span> np</span><span>.</span><span>ndarray</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>            p</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> p</span><span>.</span><span>item</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span>        prob_array</span><span>[</span><span>i</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> p</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    return</span><span> prob_array</span></span></code></pre>
+<p>The final step is the <em>update_step</em>. Each cell is updated on their belief based on p(z|x) and the prediction step belief (bel_bar). The final belief is normalized.</p>
+<p>The product of each of the sensor measurements is computed to find the total probability:</p>
+<p><img src="/lab10/sensor.png" alt="" /></p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> update_step</span><span>(</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#032F62, #9ECBFF);">    &quot;&quot;&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);"> Update step of the Bayes Filter.</span></span>
+<span class="giallo-l"><span style="color: light-dark(#032F62, #9ECBFF);">    Update the probabilities in loc.bel based on loc.bel_bar and the sensor model.</span></span>
+<span class="giallo-l"><span style="color: light-dark(#032F62, #9ECBFF);">    &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    for</span><span> x</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_X</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        for</span><span> y</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_Y</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            for</span><span> a</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span>mapper</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">MAX_CELLS_A</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>                loc</span><span>.</span><span>bel</span><span>[</span><span>x</span><span>,</span><span>y</span><span>,</span><span>a</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>prod</span><span>(</span><span>sensor_model</span><span>(</span><span>mapper</span><span>.</span><span>get_views</span><span>(</span><span>x</span><span>,</span><span>y</span><span>,</span><span>a</span><span>)</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> loc</span><span>.</span><span>bel_bar</span><span>[</span><span>x</span><span>,</span><span>y</span><span>,</span><span>a</span><span>]</span><span>       </span></span>
+<span class="giallo-l"><span>    loc</span><span>.</span><span>bel</span><span style="color: light-dark(#D73A49, #F97583);"> /=</span><span> np</span><span>.</span><span>sum</span><span>(</span><span>loc</span><span>.</span><span>bel</span><span>)</span></span></code></pre><h3 id="running-the-bayes-filter">Running the Bayes Filter</h3>
+<p>Using the above functions, the Bayes Filter is run using a defined trajectory. The robot is initialized with a uniform probability distribution.</p>
+<p><img src="/lab10/bayesinitial.png" alt="" /></p>
+<p>In each iteration, the filter executes the robot's linear motion, performs the prediction step, executes the robot's angular motion to read sensor data, and performs the update step.</p>
+<p>The full iteration loop is shown below, displaying the prediction and update information, robot trajectory, odometry readings (red), ground truth (green), and the beliefs (blue).</p>
+<p><video src="/lab10/bayes.webm" controls></video></p>
+<p>We observe that the odometry readings quickly become unreliable and stray from the ground truth. In general, the beliefs match with the ground truth. The Bayes Filter performs best when the robot is close to corners or walls due to more accurate sensor data. For example, the narrow hallway on the right side shows less error than in the center.</p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://fast.synthghost.com/lab-10-simulated-localization/">Stephan's site</a> was referenced for the normalization expression and debugging the prediction + update steps.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab9/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 9: Mapping</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/" accesskey="."
+    ><span>Lab 11: Grid Localization (Real-World)</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

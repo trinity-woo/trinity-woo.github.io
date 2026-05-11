@@ -1,0 +1,314 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 9: Mapping | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 9: Mapping" />
+  <meta name="description" content="Building a map of a static room.&amp;hellip;" />
+  <meta property="og:description" content="Building a map of a static room.&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab9/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab9/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-04-07T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 9: Mapping</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-04-07T00:00:00+00:00">2026-04-07</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#orientation-control">Orientation Control</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#reading-distances">Reading Distances</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#3-2">(-3, -2)</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-3">(5, -3)</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-3-1">(5, 3)</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#0-3">(0, 3)</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#0-0">(0, 0)</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#creating-inertial-reference-frame-map">Creating Inertial Reference Frame Map</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#line-based-map">Line-Based Map</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Building a map of a static room. <span id="continue-reading"></span></p>
+<h3 id="orientation-control">Orientation Control</h3>
+<p>I decided to implement orientation control, where the robot should have at least 14 readings per full rotation. I chose this over angular speed control since the gyroscope DMP measurements are very accurate and the car can do on-axis turns as shown in Lab 7.</p>
+<p>First, the angular PID function must be modified to automatically perform incremental turns for a full 360 degrees. Since we need at least 14 measurements, I decided to increment every 20 degrees.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      int</span><span> increment </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 20</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      int</span><span> angleTraveled</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collectPIDangle</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>angleInitialized</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          angleTraveled </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>          angleWanted </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> gyro_yaw </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> increment</span><span>;</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> set first point </span></span>
+<span class="giallo-l"><span>          angleInitialized </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>angleTraveled </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>          pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_angle_control</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          int</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> Spa</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          int</span><span> pwm_min </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 95</span><span>;</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> abs</span><span>(</span><span>pwm</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>errorCur</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> pwm_angle_tolerance</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>            driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"><span>            angleWanted </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> increment</span><span>;</span></span>
+<span class="giallo-l"><span>            angleTraveled </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> increment</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> pwm_max</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_max</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> pwm_min</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_min</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> RIGHT</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> LEFT</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span>   </span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>          driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"><span>          collectPIDangle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>Now, when the <em>collectPIDangle</em> flag is set on, the car sets the first wanted angle depending on its current orientation. Then, for a full rotation, it changes its wanted angle in increments of 20 degrees, moving to the next when the tolerance value is reached.</p>
+<p>I conducted additional trials to find the turn calibration value so that the car turns evenly about the axis. I implemented a command to change the value over Bluetooth, and the final <em>turn_calibration</em> was 1.15. I also modified the turn gains:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Kpa</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.06</span></span>
+<span class="giallo-l"><span>Kia</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.002</span></span>
+<span class="giallo-l"><span>Kda</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.08</span></span>
+<span class="giallo-l"><span>Spa</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.6</span></span></code></pre>
+<p>A trial video is shown below:</p>
+<p><video src="/lab9/trial1.MOV" controls></video>
+<img src="/lab9/testtof.png" alt="" />
+<img src="/lab9/testyaw.png" alt="" /></p>
+<p>When first converting the data into a polar plot, I noticed that some data would overlap since the car oscillates:</p>
+<p><img src="/lab9/testpolar.png" alt="" /></p>
+<p>I then sorted the data by the yaw angle, which transforms the overlaps into sharp peaks:</p>
+<p><img src="/lab9/testpolar2.png" alt="" /></p>
+<p>The ToF sensors have an estimated error of +-25mm. The DMP measurements are accurate and its error is negligible. My hardcoded angle tolerance for PID control was 3 degrees. Lastly, drift from the axis is estimated to be 50mm.</p>
+<h3 id="reading-distances">Reading Distances</h3>
+<p>I then executed the data collection at 5 marked locations, making sure to start the robot facing in the top direction for each trial. The end of each trial is signified by the blinking LED.</p>
+<p>Note that the PWM values alternate between the minimum value to overcome friction, 95, and 0. I experimented with changing the gain values further to have varied values above 95, but found that the car was likely to spin out of control. I decided it was best to keep close to the minimum PWM values.</p>
+<h4 id="3-2">(-3, -2)</h4>
+<p><video src="/lab9/trial3.MOV" controls></video>
+<img src="/lab9/tof(-3,2).png" alt="" />
+<img src="/lab9/pwm(-3,2).png" alt="" />
+<img src="/lab9/polar(-3,2).png" alt="" /></p>
+<h4 id="5-3">(5, -3)</h4>
+<p><video src="/lab9/trial4.MOV" controls></video>
+<img src="/lab9/tof(5,-3).png" alt="" />
+<img src="/lab9/pwm(5,-3).png" alt="" />
+<img src="/lab9/polar(5,-3).png" alt="" /></p>
+<h4 id="5-3-1">(5, 3)</h4>
+<p><video src="/lab9/trial5.MOV" controls></video>
+<img src="/lab9/tof(5,3).png" alt="" />
+<img src="/lab9/pwm(5,3).png" alt="" />
+<img src="/lab9/polar(5,3).png" alt="" /></p>
+<h4 id="0-3">(0, 3)</h4>
+<p><video src="/lab9/trial6.MOV" controls></video>
+<img src="/lab9/tof(0,3).png" alt="" />
+<img src="/lab9/pwm(0,3).png" alt="" />
+<img src="/lab9/polar(0,3).png" alt="" /></p>
+<h4 id="0-0">(0, 0)</h4>
+<p><video src="/lab9/trial7.MOV" controls></video>
+<img src="/lab9/tof(0,0).png" alt="" />
+<img src="/lab9/pwm(0,0).png" alt="" />
+<img src="/lab9/polar(0,0).png" alt="" /></p>
+<h3 id="creating-inertial-reference-frame-map">Creating Inertial Reference Frame Map</h3>
+<p>To convert our polar measurements into a cartesian map, we use this transformation matrix (only 2D is required since the car does not rotate or translate in the z direction):</p>
+<p>$$
+\begin{bmatrix}
+cos(\theta) &amp; -sin(\theta)
+\newline
+sin(\theta) &amp; cos(\theta)
+\end{bmatrix}
+$$</p>
+<p>In Python, I imported the logged CSV files, matched the yaw angles with the closest time-aligned ToF/Kalman Filter data, and converted the polar data into the inertial reference frame. The marked locations are in feet, which I converted into mm. I also estimated the distance between the front ToF sensor and the center axis of the car to be ~75mm, which I subtracted from the IMU values.</p>
+<p>Lastly, since the car started facing towards the top, a 90 degree offset was needed. After doing manual fitting, I determined a 105 degree offset was more accurate to the true map. The reason could be misproper attachment of the sensor leading to an angle skew, or a data buffer.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span style="color: light-dark(#E36209, #FFAB70);"> file</span><span>,</span><span> color</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> zip</span><span>(</span><span>files</span><span>,</span><span> colors</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">...</span></span>
+<span class="giallo-l"><span>    merged</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> pd</span><span>.</span><span>merge_asof</span><span>(</span><span> </span></span>
+<span class="giallo-l"><span>        merged</span><span>,</span></span>
+<span class="giallo-l"><span>        imu</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        on</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">time</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        direction</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">nearest</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    merged</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> merged</span><span>.</span><span>dropna</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    theta</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>deg2rad</span><span>(</span><span>merged</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">yaw</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>.</span><span>values</span><span>.</span><span>astype</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">float</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> np</span><span>.</span><span>deg2rad</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">105</span><span>)</span></span>
+<span class="giallo-l"><span>    r</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> merged</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">r</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>.</span><span>values</span><span>.</span><span>astype</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">float</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    x</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>r</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> tofOffset</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>cos</span><span>(</span><span>theta</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> x0</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">0.3048</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">1000</span></span>
+<span class="giallo-l"><span>    y</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> (</span><span>r</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> tofOffset</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>sin</span><span>(</span><span>theta</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> y0</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">0.3048</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">1000</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">...</span></span></code></pre>
+<p><img src="/lab9/map1.png" alt="" /></p>
+<p>Only the (0,0) point seemed inaccurate after the angle adjustment, which I determined is likely from user error in setting up the trial, starting from an angle as seen in the video.</p>
+<p>Therefore, I decided to remove the optional (0,0) data from the map.</p>
+<p><img src="/lab9/map2.png" alt="" /></p>
+<h3 id="line-based-map">Line-Based Map</h3>
+<p>The last step is to convert the scatter-plot map into a line-based map. I manually estimated the wall boundaries, put the start and end points of each line into lists, and drew them ontop of the current map.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>starts</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1600</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1300</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1600</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">800</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1400</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1850</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1850</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">650</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>         (</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1400</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1500</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">700</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 200</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span>ends</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1600</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">800</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1400</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1850</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1850</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">650</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">350</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1600</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1300</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span>       (</span><span style="color: light-dark(#005CC5, #79B8FF);">1400</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1500</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">700</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 200</span><span>)</span><span>,</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">600</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">500</span><span>)</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> (</span><span>x_start</span><span>,</span><span> y_start</span><span>)</span><span>,</span><span> (</span><span>x_end</span><span>,</span><span> y_end</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> zip</span><span>(</span><span>starts</span><span>,</span><span> ends</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    plt</span><span>.</span><span>plot</span><span>(</span><span>[</span><span>x_start</span><span>,</span><span> x_end</span><span>]</span><span>,</span><span> [</span><span>y_start</span><span>,</span><span> y_end</span><span>]</span><span>,</span><span style="color: light-dark(#E36209, #FFAB70);"> color</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#032F62, #9ECBFF);"> &#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">c</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span><span style="color: light-dark(#E36209, #FFAB70);"> marker</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">o</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span><span style="color: light-dark(#E36209, #FFAB70);"> linewidth</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">3</span><span>)</span></span></code></pre>
+<p><img src="/lab9/map3.png" alt="" /></p>
+<p>I took some liberties in choosing which data points to consider vs. ignore. I put more trust into points closer to their respective car  locations. For example, in the bottom right corner, I mostly based the map off of the yellow points. On the left side, I based the map off of red and green, and ignored yellow.</p>
+<p>Overall, the map resembles the true layout, but has errors in the true wall angles, which should all be perpendicular. Additionally, the bottom wall indent is more narrow in the true layout, and the box in the top right was difficult to model accurately.</p>
+<p>Utilizing the Kalman Filter data gave more points to work with, but also introduced more noise and inaccurate measurements. Still, it is an improvement over using only the sensor data.</p>
+<h3 id="collaborations">Collaborations</h3>
+<p>ChatGPT was used for converting to polar plots and setting up the inertial-based map.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab8/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 8: Stunts</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab10/" accesskey="."
+    ><span>Lab 10: Grid Localization using Bayes Filter</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

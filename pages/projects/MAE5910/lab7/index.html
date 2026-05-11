@@ -1,0 +1,375 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 7: Kalman Filter | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 7: Kalman Filter" />
+  <meta name="description" content="Implementing a Kalman Filter to replace extrapolated data.&amp;hellip;" />
+  <meta property="og:description" content="Implementing a Kalman Filter to replace extrapolated data.&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab7/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab7/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-03-24T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 7: Kalman Filter</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-03-24T00:00:00+00:00">2026-03-24</time><span
+        class="middot"></span><time
+    datetime="PT0H6M0S">6&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#estimating-drag-and-momentum">Estimating Drag and Momentum</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#initializing-the-kalman-filter">Initializing the Kalman Filter</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#implementing-kalman-filter-simulated">Implementing Kalman Filter (Simulated)</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#implementing-kalman-filter-robot">Implementing Kalman Filter (Robot)</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#trial-1">Trial 1:</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#trial-2">Trial 2:</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Implementing a Kalman Filter to replace extrapolated data. <span id="continue-reading"></span></p>
+<h3 id="prelab">Prelab</h3>
+<p>I verified that the ToF sensor and PWM data could be sent over Bluetooth and logged:</p>
+<p><img src="/lab7/testlog.png" alt="" /></p>
+<p>I changed the <em>DRIVE</em> command to also take a PWM value, allowing an input of a constant motor speed:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span> DRIVE:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"><span>        ...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> speed</span><span>;</span></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>speed</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> speed</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        ...</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>Lastly, I commented out the extrapolation lines, as it will be replaced by the Kalman Filter values, and I adjusted the <em>collect_tof</em> function to stop the motors and send the data over Bluetooth when set to 0.</p>
+<p>I ensured the system worked by testing with a moving box and measuring the front distance:</p>
+<p><img src="/lab7/test.png" alt="" /></p>
+<h3 id="estimating-drag-and-momentum">Estimating Drag and Momentum</h3>
+<p>The drag and momentum terms need to be estimated by driving the car towards a wall with a constant step response. Since Lab 5 used 255 for the maximum PWM, I used 50%, rounded up to 128.</p>
+<p>I set up the car as far away from the wall (while remaining within the 2m sensor range) so that it could reach steady state. After crashing into the wall, the sensor data would peak, so I removed the data right after the crash by manually setting the distance threshold. Active braking was already implemented in Lab 6.</p>
+<p>The speed was directly calculated from the ToF measurements. The distance, PWM value, and speed were plotted, showing the full data and the data before the crash:</p>
+<p><img src="/lab7/wall2.png" alt="" />
+<img src="/lab7/wallbuffer.png" alt="" /></p>
+<p>The estimated steady-state speed is 1.75 m/s. The estimated 90% rise time is around 0.8 seconds to reach 1.575 m/s. The u_ss term is 0.5, since we used 50% of the maximum. Now, we can determine the drag and momentum terms:</p>
+<p>$$
+d = \frac{u_{ss}}{\dot{x}_{ss}} = \frac{0.5}{1.75} ≈ 0.2857 kg/s
+$$</p>
+<p>$$
+m = -d * \frac{t_r}{ln(1-d*\dot{x}_{ss})} = -0.2857 * \frac{0.8}{ln(1-0.5)} ≈ 0.33 kg
+$$</p>
+<h3 id="initializing-the-kalman-filter">Initializing the Kalman Filter</h3>
+<p>The A and B matrices and their discretized versions were computed in Python, where n represents the 2 states, and Delta_t is the 30ms sensor timing budget.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>d</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.2857</span><span> </span></span>
+<span class="giallo-l"><span>m</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.33</span></span>
+<span class="giallo-l"><span>n</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span></span>
+<span class="giallo-l"><span>Delta_t</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> .03</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>A</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span>,</span><span> [</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span>d</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>m</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>B</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>m</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Ad</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>eye</span><span>(</span><span>n</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> Delta_T</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> A</span><span> </span></span>
+<span class="giallo-l"><span>Bd</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> Delta_t</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> B</span></span></code></pre>
+<p>The data from the CSV file was extracted, and the crash distance threshold was selected depending on the trial:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>df</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> pd</span><span>.</span><span>read_csv</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">wall1.csv</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>tof_df</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span style="color: light-dark(#032F62, #9ECBFF);"> &#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">ToF</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span></span>
+<span class="giallo-l"><span>tof_time</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> tof_df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">Time (ms)</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>.</span><span>to_numpy</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>tof</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> tof_df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">front_distance (mm)</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>.</span><span>to_numpy</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>pwm_df</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span style="color: light-dark(#032F62, #9ECBFF);"> &#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">PWM</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span></span>
+<span class="giallo-l"><span>pwm_time</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> pwm_df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">Time (ms)</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>.</span><span>to_numpy</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>pwm</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> pwm_df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">PWM value</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>.</span><span>to_numpy</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>crash_threshold</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 250</span></span>
+<span class="giallo-l"><span>crash_index</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>argmax</span><span>(</span><span>tof</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;=</span><span> crash_threshold</span><span>)</span></span></code></pre>
+<p>Then, the C matrix and state vector were initialized:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>C</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>start</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span></span>
+<span class="giallo-l"><span>time</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> time</span><span>[</span><span>start</span><span>:</span><span>crash_index</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> time</span><span>[</span><span>start</span><span>]</span></span>
+<span class="giallo-l"><span>tof</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> tof</span><span>[</span><span>start</span><span>:</span><span>crash_index</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>x</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span>tof</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>]</span><span>,</span><span> [</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>]</span><span>)</span></span></code></pre>
+<p>Lastly, the process noise and covariance matrices must be determined.</p>
+<p>$$
+\sigma_1 = \sigma_2 = \sqrt{\frac{10^2}{dt}}
+$$</p>
+<p>$$
+\sigma_3 = \sqrt{\frac{10^2}{dx}}
+$$</p>
+<p>Substituting the 30ms ranging time for dt, and an estimated 25mm sensor error, we obtain the values ~58 and ~ 63, which is also used for the initial sigma/noise matrix.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>sigma_1</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 58</span></span>
+<span class="giallo-l"><span>sigma_2</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> sigma_1</span></span>
+<span class="giallo-l"><span>sigma_3</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 63</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>sigma_u</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span>np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span>sigma_1</span><span style="color: light-dark(#D73A49, #F97583);">**</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span>sigma_2</span><span style="color: light-dark(#D73A49, #F97583);">**</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>sigma_z</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span>np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span>sigma_3</span><span style="color: light-dark(#D73A49, #F97583);">**</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>sigma</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span>[</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">58</span><span style="color: light-dark(#D73A49, #F97583);">**</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>]</span><span>,</span><span> [</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 63</span><span style="color: light-dark(#D73A49, #F97583);">**</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span></code></pre><h3 id="implementing-kalman-filter-simulated">Implementing Kalman Filter (Simulated)</h3>
+<p>The Kalman Filter is first implemented in Python without the robot.</p>
+<p>Since the speed of PWM data is much faster than the ToF readings, I extrapolated the ToF values to match number of PWM values.</p>
+<p><img src="/lab7/extrapolated.png" alt="" /></p>
+<p>Using the above variances, the Kalman Filter data and the original ToF data is graphed:</p>
+<p><img src="/lab7/kalmandefault.png" alt="" /></p>
+<p>Increasing $\sigma_1$ or $\sigma_2$ represents a decrease in the sampling time dt, and therefore an increase in trust of the sensor data. Below shows a $\sigma_1$ and $\sigma_2$ of 200 and $\sigma_3$ of 63:</p>
+<p><img src="/lab7/kalman1.png" alt="" /></p>
+<p>Increasing $\sigma_3$ represents a decrease in the sensor variance dx, and therefore an increase of trust in the model. Below shows a $\sigma_1$ and $\sigma_2$ of 58 and $\sigma_3$ of 200:</p>
+<p><img src="/lab7/kalman2.png" alt="" /></p>
+<p>I decided on the final values of 80 for $\sigma_1$ and $\sigma_2$, and 25 for $\sigma_3$.</p>
+<p><img src="/lab7/kalmanfinal.png" alt="" /></p>
+<p>Additional factors that affect the Kalman Filter include:</p>
+<ul>
+<li>The drag and momentum terms, which the A and B matrices build on. It is essential to ensure that these terms match the system for an accurate prediction.</li>
+<li>The sampling time delta_t. An increase in sampling time corresponds to less trust in the sensor data.</li>
+<li>The sampling time of the PWM/PID loop, which affects the extrapolated ToF sampling time in the simulated version.</li>
+<li>THe initial x value, which takes the first ToF sensorvalue in the simulated version, but depends on the ToF sampling time in the live version.</li>
+</ul>
+<h3 id="implementing-kalman-filter-robot">Implementing Kalman Filter (Robot)</h3>
+<p>Now that the Kalman Filter has been tested on logged data, it can be implemented on the live robot data. <em>kfArray</em> and <em>kf_count</em> were initialized to hold the Kalman Filter values to later compare against the raw data.</p>
+<p>The Kalman Filter initialization was rewritten in C++:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> Ad </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">033</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">971</span><span>}</span><span>;</span></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> Bd </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">909</span><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> C </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>}</span><span>;</span></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> x </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span> sigma_1 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 80</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span> sigma_2 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> sigma_1</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span> sigma_3 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 25</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> uMatrix </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span>Sp</span><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> sigma_u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span>sigma_1</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>sigma_1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">                       0</span><span>,</span><span> sigma_2</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>sigma_2</span><span>}</span><span>;</span></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> sigma_z </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span>sigma_3</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>sigma_3</span><span>}</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> sigma </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">58</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">58</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">                    0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 63</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#005CC5, #79B8FF);">63</span><span>}</span><span>;</span></span></code></pre>
+<p>In the <em>get_TOF</em> function, the x matrix is initialized to the first ToF value.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>tof_count </span><span style="color: light-dark(#D73A49, #F97583);">==</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    x </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span>distanceFront</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>}</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span></code></pre>
+<p>Next, the <em>kf</em> function was rewritten in C++, which takes an additional <em>tofReady</em> boolean to check whether to return updated or predicted values:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span style="color: light-dark(#6F42C1, #B392F0);"> kf</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">Matrix</span><span> &lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>&gt;</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;</span><span style="color: light-dark(#E36209, #FFAB70);">mu</span><span>,</span><span style="color: light-dark(#6F42C1, #B392F0);"> Matrix</span><span> &lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>&gt;</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;</span><span style="color: light-dark(#E36209, #FFAB70);">sigma</span><span>,</span><span style="color: light-dark(#6F42C1, #B392F0);"> Matrix</span><span>&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>&gt;</span><span style="color: light-dark(#E36209, #FFAB70);"> u</span><span> ,</span><span style="color: light-dark(#D73A49, #F97583);"> float</span><span style="color: light-dark(#E36209, #FFAB70);"> y</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> bool</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;</span><span style="color: light-dark(#E36209, #FFAB70);">tofReady</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>  </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  int</span><span> tkf </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> mu_p </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Ad </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> mu </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> Bd </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> u</span><span>;</span></span>
+<span class="giallo-l"><span>  Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> sigma_p </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>Ad </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> (</span><span>sigma </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#D73A49, #F97583);"> ~</span><span>Ad</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> sigma_u</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>tofReady</span><span>)</span><span>{</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> update</span></span>
+<span class="giallo-l"><span>    Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> identity </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> {</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">                          0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>}</span><span>;</span><span>    </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> sig_m </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>C </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> (</span><span>sigma_p </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span style="color: light-dark(#D73A49, #F97583);"> ~</span><span>C</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> sigma_z</span><span>;</span></span>
+<span class="giallo-l"><span>    Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> kkf_gain </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> sigma_p </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">~</span><span>C </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">Inverse</span><span>(</span><span>sig_m</span><span>)</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    Matrix</span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> y_m </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> y </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> (</span><span>C </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> mu_p</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    mu </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> mu_p </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> kkf_gain </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> y_m</span><span>;</span></span>
+<span class="giallo-l"><span>    sigma </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>identity </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> (</span><span>kkf_gain </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> C</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> sigma_p</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  else</span><span> {</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> return prediction</span></span>
+<span class="giallo-l"><span>    mu </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> mu_p</span><span>;</span></span>
+<span class="giallo-l"><span>    sigma </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> sigma_p</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  tofReady </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>kf_count </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> maxSize</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>      kfArray</span><span>[</span><span>kf_count</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> tkf</span><span>;</span></span>
+<span class="giallo-l"><span>      kfArray</span><span>[</span><span>kf_count </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#6F42C1, #B392F0);"> mu</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      kf_count </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  return</span><span style="color: light-dark(#6F42C1, #B392F0);"> mu</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Finally, in the main loop, the <em>kf</em> function is called and updates the distanceFront value:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collectTOF </span><span style="color: light-dark(#D73A49, #F97583);">&amp;&amp;</span><span> (</span><span>collectPID </span><span style="color: light-dark(#D73A49, #F97583);">||</span><span> collectPIDangle</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          tofReady </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>          tofReady </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        float</span><span> kfVal </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> kf</span><span>(</span><span>x</span><span>,</span><span> sigma</span><span>,</span><span> uMatrix</span><span>,</span><span> distanceFront</span><span>,</span><span> tofReady</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        distanceFront </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> kfVal</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span><span>      </span></span></code></pre>
+<p>In the Jupyter side, I command the robot forward until it reaches the 1 ft distance from the wall, similar to Lab 5 but with a faster PID loop due to the Kalman Filter. I also decided to increase the max PWM speed and retune the gains to improve performance.</p>
+<p>Several trials were recorded with varying speeds and gains.</p>
+<h4 id="trial-1">Trial 1:</h4>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Kp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.1</span></span>
+<span class="giallo-l"><span>Ki</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.002</span></span>
+<span class="giallo-l"><span>Kd</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.25</span></span>
+<span class="giallo-l"><span>Sp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.8</span></span></code></pre>
+<p><video src="/lab7/faster.mov" controls></video>
+<img src="/lab7/data1.png" alt="" />
+<img src="/lab7/data2.png" alt="" /></p>
+<p>(Note that the straight line in the Kalman Filter is due to an error in extracting data, and only the absolute value of PWM is graphed. The Kalman Filter also always starts near 0 since there is some time between the first ToF value being initialized and the start of the PID control.)</p>
+<p>Although the PWM is relatively high, reaching around 150, the car does not stop exactly at the wall and oscillates back.</p>
+<h4 id="trial-2">Trial 2:</h4>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Kp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.05</span></span>
+<span class="giallo-l"><span>Ki</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.001</span></span>
+<span class="giallo-l"><span>Kd</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.12</span></span>
+<span class="giallo-l"><span>Sp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.6</span></span></code></pre>
+<p><video src="/lab7/recent.mov" controls></video></p>
+<p><img src="/lab7/data5.png" alt="" />
+<img src="/lab7/data6.png" alt="" /></p>
+<p>This trial only reaches a max PWM of ~80, but stops without oscillation.</p>
+<p>Since the car tends to overshoot the distance goal, improvements could include increasing the deadband range, decreasing the minimum PWM value, and starting the Kalman Filter only after the x matrix is initialized.</p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://fast.synthghost.com/lab-5-linear-pid-control/">Stephan's site</a> was referenced for comparing plots and sensor variance expressions.</p>
+<p><a rel="external" href="https://evnleong.github.io/MAE4190/lab7.html">Evan's site</a> was referenced for comparing d and m values, and debugging the Kalman Filter PID control code.</p>
+<p>ChatGPT was utilized for the notification handlers, pulling data from the CSVs, extrapolating ToF values, and graphing.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 6: Orientation PID Control</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab8/" accesskey="."
+    ><span>Lab 8: Stunts</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

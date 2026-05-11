@@ -1,0 +1,488 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 1: Artemis and Bluetooth | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 1: Artemis and Bluetooth" />
+  <meta name="description" content="Setting up the Artemis board and sending bluetooth data between the computer and the robot.&amp;hellip;" />
+  <meta property="og:description" content="Setting up the Artemis board and sending bluetooth data between the computer and the robot.&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab1/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab1/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-01-23T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 1: Artemis and Bluetooth</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-01-23T00:00:00+00:00">2026-01-23</time><span
+        class="middot"></span><time
+    datetime="PT0H6M0S">6&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#lab-1a">Lab 1A</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#1-artemis-connection">1 Artemis Connection</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#2-blink">2 Blink</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#3-serial-monitor">3 Serial Monitor</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#4-temperature-sensor">4 Temperature Sensor</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-microphone">5 Microphone</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#additional-task-tuner">Additional Task: Tuner</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#lab-1b">Lab 1B</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#prelab-1">Prelab</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#1-echo">1 Echo</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#2-send-three-floats">2 Send Three Floats</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#3-get-time">3 Get Time</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#4-notification-handler">4 Notification Handler</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-data-transfer-rate">5 Data Transfer Rate</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#6-sending-time">6 Sending Time</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#7-sending-temperature">7 Sending Temperature</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#8-method-comparison">8 Method Comparison</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#additional-task-effective-data-rate-and-overhead">Additional Task: Effective Data Rate and Overhead</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#additional-task-reliability">Additional Task: Reliability</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Setting up the Artemis board and sending bluetooth data between the computer and the robot. <span id="continue-reading"></span></p>
+<h2 id="lab-1a">Lab 1A</h2>
+<h3 id="prelab">Prelab</h3>
+<p>Prelab setup included updating the ArduinoIDE and installing the custom Sparkfun Apollo3 board definition for development with the Artemis.</p>
+<h3 id="1-artemis-connection">1 Artemis Connection</h3>
+<p>The Artemis board was connected to the computer via USB-C, and the <em>Redboard Artemis Nano</em> board and corresponding port were selected.</p>
+<p><img src="/lab1/artemis.png" alt="" /></p>
+<h3 id="2-blink">2 Blink</h3>
+<p>The <em>Blink</em> example code was compiled and uploaded. The resulting blinking LED on the Artemis is shown below.</p>
+<p><video src="/lab1/blink.mp4" muted loop autoplay></video></p>
+<h3 id="3-serial-monitor">3 Serial Monitor</h3>
+<p>The <em>Example4_Serial</em> code was compiled and uploaded. The serial monitor's baud rate was set to 115000 to match the rate defined in the code.
+The example code serial writes 0-9 to demonstrate the support of <em>printf</em>. Additionally, the line:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="c"><span class="giallo-l"><span>Serial.</span><span style="color: light-dark(#6F42C1, #B392F0);">write</span><span>(</span><span>Serial.</span><span style="color: light-dark(#6F42C1, #B392F0);">read</span><span>(</span><span>)</span><span>)</span><span>;</span></span></code></pre>
+<p>commands the Serial Monitor to echo back typed messages, as shown below.</p>
+<p><img src="/lab1/serial.png" alt="" /></p>
+<h3 id="4-temperature-sensor">4 Temperature Sensor</h3>
+<p>The <em>Example2_analogRead</em> code was compiled and uploaded. The serial output is shown below, where blowing or pressing on the sensor caused the reading to jump.</p>
+<p><img src="/lab1/temp.webm" alt="" /></p>
+<p><video src="/lab1/temp.webm" muted loop autoplay></video></p>
+<h3 id="5-microphone">5 Microphone</h3>
+<p>The <em>Example1_MicrophoneOutput</em> code was compiled and uploaded. I monitored the output of the loudest frequency, which jumped when I spoke into the Artemis or lightly tapped it against a surface.</p>
+<p><video src="/lab1/microphone.webm" muted loop autoplay width="400"></video></p>
+<h3 id="additional-task-tuner">Additional Task: Tuner</h3>
+<p>The previous <em>Example1_MicrophoneOutput</em> template was used as a base to create a simplified electronic tuner.
+My tuner detects three different octaves of A: A4 (440 Hz), A5 (880 Hz), and A6 (1760 Hz). The modified <em>printLoudest</em> function outputs to serial if a note is detected within the three defined frequencies (within a 10 hz error range).</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">double</span><span> a4 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 440</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">double</span><span> a5 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 880</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">double</span><span> a6 </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1760</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">double</span><span> error </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 10</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>ui32LoudestFrequency </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> a4</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> error</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">printf</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Note found: A4!</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>ui32LoudestFrequency </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> a5</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> error</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">printf</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Note found: A5!</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>ui32LoudestFrequency </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> a6</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> error</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">printf</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Note found: A6!</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">printf</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#005CC5, #79B8FF);">\n</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>This interactive table from <a rel="external" href="https://muted.io/note-frequencies/">muted.io</a> was used to select and play specific frequencies.</p>
+<p>Through testing, I found that the microphone could accurately detect frequencies until ~250 Hz, at which playing any lower frequency would output erroneously higher frequencies. Additionally, false positives due to noise occurred.</p>
+<p>The video below demonstrates the successful detection of each of the three notes.</p>
+<p><video src="/lab1/tuner.mp4" loop controls></video></p>
+<h2 id="lab-1b">Lab 1B</h2>
+<h3 id="prelab-1">Prelab</h3>
+<p>This section establishes Bluetooth Low Energy (BLE) communication between the Artemis and the computer.
+A virtual environment was set up and activated, where the Jupyter server was ran. Python 3.13.11 is used, and the following packages are installed:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span> pip</span><span> install</span><span> numpy</span><span> pyyaml</span><span> colorama</span><span> nest_asyncio</span><span> bleak</span><span> jupyterlab</span></span></code></pre>
+<p>The provided codebase includes scripts for the Artemis (Arduino/C++) and the computer (Python).</p>
+<p>In addition to the main Arduino script, there are three class definitions: for sending/receiving data; editing character arrays; and extracting command values sent by the computer.</p>
+<p>The Python side includes; <em>ble.py</em> to define Bluetooth and data handling functions; a script to define command types sent to the robot; <em>connections.yaml</em> to define addresses and UUIDs; a script that formats logs and outputs to a directory. We also use a ipynb (Jupyter Notebook) to write commands, and send/receive Artemis data.</p>
+<p>BLE communication follows a client-server model, where central devices (in this case, the computer) read or write data from a peripheral device (the Artemis board).</p>
+<p>To establish connection between my specific Artemis board and the computer, the Artemis' MAC address and a randomly generated UUID are defined in the Python <em>connections.yaml</em> script. The UUID defined in the Arduino script must match. The Artemis advertises with its MAC address, and the computer connects by searching for the address and UUID.</p>
+<p><img src="/lab1/macaddress.png" alt="" /></p>
+<p><img src="/lab1/connected.png" alt="" /></p>
+<h3 id="1-echo">1 Echo</h3>
+<p>The ECHO command in the Arduino code was modified to return the string send by the computer.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> ECHO:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      char</span><span> char_arr</span><span>[</span><span>MAX_MSG_SIZE</span><span>]</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6A737D, #6A737D);">      //</span><span style="color: light-dark(#6A737D, #6A737D);"> Extract the next value from the command string as a character array</span></span>
+<span class="giallo-l"><span>      success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>char_arr</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>char_arr</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      break</span><span>;</span></span></code></pre>
+<p><img src="/lab1/woop.png" alt="" /></p>
+<h3 id="2-send-three-floats">2 Send Three Floats</h3>
+<p>The SEND_THREE_FLOATS command was modified:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> SEND_THREE_FLOATS:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      float</span><span> int_c</span><span>,</span><span> int_d</span><span>,</span><span> int_e</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>int_c</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>int_d</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>int_e</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">print</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Three Integers: </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">print</span><span>(</span><span>int_c</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">print</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">print</span><span>(</span><span>int_d</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">print</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">println</span><span>(</span><span>int_e</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      break</span><span>;</span></span></code></pre>
+<p>When running the following code cell in Jupyter, separating each command with "|":</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>ble</span><span>.</span><span>send_command</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">SEND_THREE_FLOATS</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">1|2|3</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>ble</span><span>.</span><span>send_command</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">SEND_THREE_FLOATS</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">0|6|2</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span></code></pre>
+<p>The Artemis receives and outputs the floats:</p>
+<p><img src="/lab1/3int.png" alt="" /></p>
+<h3 id="3-get-time">3 Get Time</h3>
+<p>The built-in <em>millis()</em> function is utilized to keep track of the current program runtime.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> GET_TIME_MILLIS:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      unsigned</span><span style="color: light-dark(#D73A49, #F97583);"> long</span><span> t</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      t </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>t</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>      tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      break</span><span>;</span></span></code></pre><h3 id="4-notification-handler">4 Notification Handler</h3>
+<p>A notification handler is used to receive and extract the time from <em>GET_TIME_MILLIS</em>.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    time</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span></span>
+<span class="giallo-l"><span>    extract</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> time</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>:</span><span>]</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">    print</span><span>(</span><span>extract</span><span>)</span></span></code></pre>
+<p>When running the command, the extracted time is printed.</p>
+<p><video src="/lab1/gettime.webm" loop autoplay muted></video></p>
+<h3 id="5-data-transfer-rate">5 Data Transfer Rate</h3>
+<p>To find the rate messages are sent, the command is looped:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>i</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">while</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 10</span><span>:</span></span>
+<span class="giallo-l"><span>    result</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>send_command</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">GET_TIME_MILLIS</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    i</span><span style="color: light-dark(#D73A49, #F97583);"> +=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span></code></pre>
+<p>The following times are printed by the notification handler:</p>
+<p><img src="/lab1/10loop.png" alt="" /></p>
+<p>The average time between messages sent was ~97 ms, or 10 hz. Each 9-character message sends 10 bytes (1 per character, and \0), resulting in a data rate of ~100 bytes/second.</p>
+<h3 id="6-sending-time">6 Sending Time</h3>
+<p>The maximum size of a characteristic value is 150 bytes. Leaving one byte for \0, 16 9-character messages can be sent in an array that stores time data.</p>
+<p>The time and temperature arrays are initialized as global variables.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">const</span><span style="color: light-dark(#D73A49, #F97583);"> int</span><span> maxSize </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 50</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">unsigned</span><span style="color: light-dark(#D73A49, #F97583);"> long</span><span> timeArray</span><span>[</span><span>maxSize</span><span>]</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">unsigned</span><span style="color: light-dark(#D73A49, #F97583);"> long</span><span> tempArray</span><span>[</span><span>maxSize</span><span>]</span><span>;</span></span></code></pre>
+<p>A helper function <em>make_arrays</em> is used to fill these arrays.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> make_arrays</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  unsigned</span><span style="color: light-dark(#D73A49, #F97583);"> long</span><span> m</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> temp</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  int</span><span> currentSize </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  while</span><span> (</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> maxSize</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    m </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    temp </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> getTempDegF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">println</span><span>(</span><span>m</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    timeArray</span><span>[</span><span>i</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> m</span><span>;</span></span>
+<span class="giallo-l"><span>    tempArray</span><span>[</span><span>i</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> temp</span><span>;</span></span>
+<span class="giallo-l"><span>    i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> SEND_TIME_DATA:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        make_arrays</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> maxSize</span><span>;</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>timeArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        break</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>The notification handler stores received values in an array. All 50 values are printed:</p>
+<p><img src="/lab1/times.png" alt="" /></p>
+<h3 id="7-sending-temperature">7 Sending Temperature</h3>
+<p>A similar command is written to send both time and temperature:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> GET_TEMP_READINGS:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        make_arrays</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> maxSize</span><span>;</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>timeArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>tempArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        break</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre><pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>times</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"><span>temps</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span><span>    </span></span>
+<span class="giallo-l"><span>    result</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span></span>
+<span class="giallo-l"><span>    extract</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> result</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    t1</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> extract</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>:</span><span>]</span></span>
+<span class="giallo-l"><span>    t2</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> extract</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span></span>
+<span class="giallo-l"><span>    times</span><span>.</span><span>append</span><span>(</span><span>t1</span><span>)</span></span>
+<span class="giallo-l"><span>    temps</span><span>.</span><span>append</span><span>(</span><span>t2</span><span>)</span></span></code></pre>
+<p><img src="/lab1/temps.png" alt="" /></p>
+<h3 id="8-method-comparison">8 Method Comparison</h3>
+<p>Comparing the message transfer methods in Part 5 vs. 6/7, the first method is much slower as it must wait to receive data before sending each separate command. However, it could be used in closed-loop cases, where the commands are sent depending on the received data.
+In method 2, it takes ~1.06 ms between each message, and is therefore useful in open-loop cases. The IDE output shows that "Global variables use 30552 bytes (7%) of dynamic memory", leaving 353448 bytes. If each time + temperature message takes 13 bytes, then ~27000 data points of each can be stored.</p>
+<h3 id="additional-task-effective-data-rate-and-overhead">Additional Task: Effective Data Rate and Overhead</h3>
+<p>To determine if the size of messages affect overhead, a command that echoes back the varying message sizes sent from the computer was written.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);"> case</span><span> MESSAGE:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> t</span><span>;</span></span>
+<span class="giallo-l"><span>        t </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> %</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        char</span><span> char_arr</span><span>[</span><span>MAX_MSG_SIZE</span><span>]</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>char_arr</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>t</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>char_arr</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        break</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre><pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span><span>    </span></span>
+<span class="giallo-l"><span>    m</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">    print</span><span>(</span><span>m</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    t</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> m</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span></span>
+<span class="giallo-l"><span>    times</span><span>.</span><span>append</span><span>(</span><span>t</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    s</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>m</span><span>)</span></span>
+<span class="giallo-l"><span>    sizes</span><span>.</span><span>append</span><span>(</span><span>s</span><span>)</span></span></code></pre>
+<p>The differences  between two consecutive commands were calculated normalized to match the 120 byte size (ex. the 5-byte message rate was multiplied by 24) and the plotted results are shown below. We can conclude that sending one large message is more efficient than many small messages.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>message_size</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"><span>rate</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>i</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">while</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>sizes</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    normalize</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 120</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>sizes</span><span>[</span><span>i</span><span>]</span></span>
+<span class="giallo-l"><span>    message_size</span><span>.</span><span>append</span><span>(</span><span>sizes</span><span>[</span><span>i</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>    rate</span><span>.</span><span>append</span><span>(</span><span>normalize</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">int</span><span>(</span><span>times</span><span>[</span><span>i</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);"> int</span><span>(</span><span>times</span><span>[</span><span>i</span><span>]</span><span>)</span><span>)</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>    i</span><span style="color: light-dark(#D73A49, #F97583);"> +=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span></span></code></pre>
+<p><img src="/lab1/normalized.png" alt="" /></p>
+<h3 id="additional-task-reliability">Additional Task: Reliability</h3>
+<p>To test whether the computer can read all data published at high rates, a new command is written to send messages in the magnitude of microseconds.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">case</span><span> FAST:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> rate</span><span>;</span></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>rate</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        while</span><span> (</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          delayMicroseconds</span><span>(</span><span>rate</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">String</span><span>(</span><span>i</span><span>)</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        break</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>When calling the command:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>messages</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span><span style="color: light-dark(#B31D28, #FDAEB7);font-style: italic;">;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span><span>    </span></span>
+<span class="giallo-l"><span>    m</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span></span>
+<span class="giallo-l"><span>    messages</span><span>.</span><span>append</span><span>(</span><span>m</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>ble</span><span>.</span><span>send_command</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">FAST</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span></span></code></pre>
+<p>We print the data and see that every iteration is succesfully received.</p>
+<p><img src="/lab1/quicksend.png" alt="" /></p>
+<p>However, the message array visually takes ~2 seconds to fill, suggesting that data rate is slower than the commanded 1 microsecond and is therefore limited by the Artemis.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab2/" accesskey="."
+    ><span>Lab 2: Inertial Measurement Unit</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Trinity Wu</title>
+    <link rel="self" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-04-28T00:00:00+00:00</updated>
+    <id>https://trinity-woo.github.io/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Lab 12: Path Planning and Execution</title>
+        <published>2026-04-28T00:00:00+00:00</published>
+        <updated>2026-04-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab12/</id>
+        
+        <summary type="html">&lt;p&gt;Full Bluetooth commanded mapping! Navigating through the room with local path planning.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 11: Grid Localization (Real-World)</title>
+        <published>2026-04-21T00:00:00+00:00</published>
+        <updated>2026-04-21T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab11/</id>
+        
+        <summary type="html">&lt;p&gt;Real implementation of grid localization!&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 10: Grid Localization using Bayes Filter</title>
+        <published>2026-04-12T00:00:00+00:00</published>
+        <updated>2026-04-12T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab10/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab10/</id>
+        
+        <summary type="html">&lt;p&gt;Simulated grid localization!&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 9: Mapping</title>
+        <published>2026-04-07T00:00:00+00:00</published>
+        <updated>2026-04-07T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab9/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab9/</id>
+        
+        <summary type="html">&lt;p&gt;Building a map of a static room.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 8: Stunts</title>
+        <published>2026-04-05T00:00:00+00:00</published>
+        <updated>2026-04-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab8/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab8/</id>
+        
+        <summary type="html">&lt;p&gt;Drifting!&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 7: Kalman Filter</title>
+        <published>2026-03-24T00:00:00+00:00</published>
+        <updated>2026-03-24T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab7/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab7/</id>
+        
+        <summary type="html">&lt;p&gt;Implementing a Kalman Filter to replace extrapolated data.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 6: Orientation PID Control</title>
+        <published>2026-03-10T00:00:00+00:00</published>
+        <updated>2026-03-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab6/</id>
+        
+        <summary type="html">&lt;p&gt;Orientation PID with the IMU!&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 5: Linear PID Control</title>
+        <published>2026-03-02T00:00:00+00:00</published>
+        <updated>2026-03-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab5/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab5/</id>
+        
+        <summary type="html">&lt;p&gt;Position control into a wall, tuning PID gain values, and extrapolating ToF values.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 4: Motors and Open Loop Control</title>
+        <published>2026-02-22T00:00:00+00:00</published>
+        <updated>2026-02-22T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab4/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab4/</id>
+        
+        <summary type="html">&lt;p&gt;Driving the motors with dual motor drivers, more wiring and soldering, and testing open loop commands.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Testbed Hardware</title>
+        <published>2026-02-18T00:00:00+00:00</published>
+        <updated>2026-02-18T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/SSDS/hardware/"/>
+        <id>https://trinity-woo.github.io/pages/projects/SSDS/hardware/</id>
+        
+        <summary type="html">&lt;p&gt;Testbed structure, mass balancers, propulsion systems, thrusters and reaction wheels.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Flight Control Software</title>
+        <published>2026-02-18T00:00:00+00:00</published>
+        <updated>2026-02-18T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/SSDS/software/"/>
+        <id>https://trinity-woo.github.io/pages/projects/SSDS/software/</id>
+        
+        <summary type="html">&lt;p&gt;ACS software, propulsion control modes, GUI, and communications integration.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 3: Time of Flight Sensors</title>
+        <published>2026-02-10T00:00:00+00:00</published>
+        <updated>2026-02-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab3/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab3/</id>
+        
+        <summary type="html">&lt;p&gt;Adding the Time-of-Flight (ToF) sensors, wiring and soldering, and testing new ToF and IMU data.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 2: Inertial Measurement Unit</title>
+        <published>2026-02-03T00:00:00+00:00</published>
+        <updated>2026-02-03T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab2/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab2/</id>
+        
+        <summary type="html">&lt;p&gt;Adding the IMU, storing data, and setting up the RC car!&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Lab 1: Artemis and Bluetooth</title>
+        <published>2026-01-23T00:00:00+00:00</published>
+        <updated>2026-01-23T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              Unknown
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab1/"/>
+        <id>https://trinity-woo.github.io/pages/projects/MAE5910/lab1/</id>
+        
+        <summary type="html">&lt;p&gt;Setting up the Artemis board and sending bluetooth data between the computer and the robot.&amp;hellip;
+&lt;&#x2F;p&gt;
+</summary>
+        
+    </entry>
+</feed>

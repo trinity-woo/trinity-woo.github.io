@@ -1,0 +1,295 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 8: Stunts | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 8: Stunts" />
+  <meta name="description" content="Drifting!&amp;hellip;" />
+  <meta property="og:description" content="Drifting!&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab8/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab8/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-04-05T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 8: Stunts</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-04-05T00:00:00+00:00">2026-04-05</time><span
+        class="middot"></span><time
+    datetime="PT0H3M0S">3&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#flip-setup">Flip Setup</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#drift-setup">Drift Setup</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#stunts">Stunts!</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Drifting! <span id="continue-reading"></span></p>
+<h3 id="flip-setup">Flip Setup</h3>
+<p>For the flip stunt, the car will start at some distance from the wall to reach maximum speed, stop 1 ft from the wall, flip, and drive back to the starting line.</p>
+<p>Instead of using the Kalman Filter values to estimate the distance to the wall, I decided to manually set the time the motors drive forwards and backwards. This open-loop control is not robust, but is simple and does rely on sensor data.</p>
+<p>I wrote a new <em>FLIP</em> command that sets the <em>flip</em> boolean and the time the car will drive forwards and backwards.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">bool</span><span> flip </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">int</span><span> flipForward </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2000</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">int</span><span> flipBackward </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2000</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span> FLIP:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> collect</span><span>,</span><span> forward</span><span>,</span><span> back</span><span>;</span></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>collect</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>forward</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>back</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>collect</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          flip </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>          flip </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        flipForward </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> forward</span><span>;</span></span>
+<span class="giallo-l"><span>        flipBackward </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> back</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        break</span><span>;</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>Then, in the main loop, the <em>flip</em> boolean is checked to start the flip sequence, setting the car to max speed for the set time, and then suddenly reversing direction, causing the car to flip and return to start.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>flip</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>Sp</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        float</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        while</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">millis</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> flipForward</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          forward</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span> </span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        while</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">millis</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> (</span><span>flipForward </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> flipBackward</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          back</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span> </span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        flip </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> finished stunt</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>send</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          send_data</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>...</span></span></code></pre>
+<p>Despite adding more weight to the front of the car and increasing the speed, the car was only able to get off the ground for a few inches and could not complete the flip after many attempts. Therefore, I <del>gave up and</del> decided to switch to the drift stunt, which follows a similar code architecture.</p>
+<h3 id="drift-setup">Drift Setup</h3>
+<p>For the drift stunt, the car will start at some distance from the wall to reach maximum speed, and turn 180 degrees within 3 ft. Open-loop control is implemented.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">bool</span><span> drift </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">int</span><span> driftForward </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">int</span><span> driftTurn </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>;</span></span></code></pre><pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>drift</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> Sp</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        float</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        while</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">millis</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> driftForward</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          forward</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        delay</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">10</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        while</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">millis</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> start </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> (</span><span>driftForward </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> driftTurn</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          left</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>        drift </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span style="color: light-dark(#6A737D, #6A737D);">  //</span><span style="color: light-dark(#6A737D, #6A737D);"> finished stunt</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>send</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          send_data</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>I encountered some issues where the wheels would not reverse (to turn) after moving forward, in which the <em>stop()</em>, <em>delay(10)</em> helped. Speeding up the car and increasing the starting distance was also essential to overcome friction. The left motor PWMs were multiplied by a calibration factor (as written in Lab 4), with a forward calibration of 1.12 and a turn calibration of 1.3.</p>
+<p>Due to the calibration factor, there was a limit in the maximum PWM, since at 100%, there would be no room for the left motor PWMs to be greater than the 255.</p>
+<p>After trial and error, I determined the best speed factor, forward time, and turn time:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Sp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.7</span></span>
+<span class="giallo-l"><span>forward</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 780</span></span>
+<span class="giallo-l"><span>turn</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 250</span></span></code></pre>
+<p>With adding up the forward and turn times, the stunt takes 1030 milliseconds, or just over 1 second.</p>
+<h3 id="stunts">Stunts!</h3>
+<p>The sensor data and PWM values are plotted with each trial. Since the Kalman Filter was not activated, the ToF sensor values are sparse. It is also possible that the <em>drift()</em> blocked the sensors from properly checking for data.</p>
+<p>Three successful trials are shown below:</p>
+<p><video src="/lab8/trial2.MOV" controls></video>
+<img src="/lab8/drift1.png" alt="" />
+<img src="/lab8/drift2.png" alt="" /></p>
+<p><video src="/lab8/trial3.MOV" controls></video>
+<img src="/lab8/drift5.png" alt="" />
+<img src="/lab8/drift6.png" alt="" /></p>
+<p><video src="/lab8/trial4.MOV" controls></video>
+<img src="/lab8/drift7.png" alt="" />
+<img src="/lab8/drift8.png" alt="" /></p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://evnleong.github.io/MAE4190/lab7.html">Evan's site</a> was referenced for the idea of having open-loop forward and backward times.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab7/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 7: Kalman Filter</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab9/" accesskey="."
+    ><span>Lab 9: Mapping</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

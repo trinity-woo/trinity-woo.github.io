@@ -1,0 +1,271 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 11: Grid Localization (Real-World) | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 11: Grid Localization (Real-World)" />
+  <meta name="description" content="Real implementation of grid localization!&amp;hellip;" />
+  <meta property="og:description" content="Real implementation of grid localization!&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-04-21T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 11: Grid Localization (Real-World)</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-04-21T00:00:00+00:00">2026-04-21</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#simulated-localization">Simulated Localization</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#real-localization">Real Localization</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collecting-data">Collecting Data</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#3-2-ft">(-3, -2) ft</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-3-ft">(5, 3) ft</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#5-3-ft-1">(5, -3) ft</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#0-0-ft">(0, 0) ft</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Real implementation of grid localization! <span id="continue-reading"></span></p>
+<h2 id="prelab">Prelab</h2>
+<p>The provided files were copied into the <em>notebook</em> and root directories:</p>
+<ul>
+<li>lab11_sim.ipynb: Pre-built optimized Bayes filter implementation for the virtual robot</li>
+<li>lab11_real.ipynb: Skeleton code for Bayes filter implementation on the real robot</li>
+<li>localization_extras.py: Pre-built localization module</li>
+</ul>
+<p>The Bluetooth python modules from previous labs were copied: base_ble.py, ble.py, connection.yaml, and cmd_types.py.</p>
+<h2 id="simulated-localization">Simulated Localization</h2>
+<p>The simulated localization was tested with <em>lab11_sim.ipynb</em>, and the final odometry readings (red), ground truth (green), and beliefs (blue) are shown below:</p>
+<p><img src="/lab11/simulated.png" alt="Simulated localization" /></p>
+<h2 id="real-localization">Real Localization</h2>
+<p>The real localization is implemented in <em>lab11_real.ipynb</em>. Prediction steps are not done due to the noisy sensor measurements. Therefore, the Bayes filter only runs the update steps.</p>
+<p>In the <em>RealRobot</em> class, the method <em>perform_observation_loop</em> commands the robot to perform an on-axis 360 degree turn while collecting equidistant sensor readings, similar to the COLLECT_PIDANGLE case in <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/lab9.md">Lab 9</a>.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    async</span><span style="color: light-dark(#D73A49, #F97583);"> def</span><span style="color: light-dark(#6F42C1, #B392F0);"> perform_observation_loop</span><span>(</span><span>self</span><span>,</span><span> rot_vel</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">120</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">        self</span><span>.</span><span>sensor_ranges</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        ble</span><span>.</span><span>stop_notify</span><span>(</span><span>ble</span><span>.</span><span>uuid</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">RX_STRING</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>        ble</span><span>.</span><span>start_notify</span><span>(</span><span>ble</span><span>.</span><span>uuid</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">RX_STRING</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>]</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>notification_handler</span><span>)</span></span>
+<span class="giallo-l"><span>        ble</span><span>.</span><span>send_command</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">SEND</span><span>)</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span></span>
+<span class="giallo-l"><span>        ble</span><span>.</span><span>send_command</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">COLLECT_TOF</span><span>)</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        count</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>config_params</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">mapper</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">observations_count</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span></span>
+<span class="giallo-l"><span>        increment</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">self</span><span>.</span><span>config_params</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">mapper</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">observations_count</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span></span>
+<span class="giallo-l"><span>        ble</span><span>.</span><span>send_command</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">CMD</span><span>.</span><span style="color: light-dark(#005CC5, #79B8FF);">COLLECT_PIDANGLE</span><span>)</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> f</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#005CC5, #79B8FF);">{</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#005CC5, #79B8FF);">}</span><span style="color: light-dark(#032F62, #9ECBFF);">|</span><span style="color: light-dark(#005CC5, #79B8FF);">{</span><span>increment</span><span style="color: light-dark(#005CC5, #79B8FF);">}</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        await</span><span> asyncio</span><span>.</span><span>sleep</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">60</span><span>)</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span>        npsensor_ranges</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>array</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">self</span><span>.</span><span>sensor_ranges</span><span>)</span><span>[</span><span>np</span><span>.</span><span>newaxis</span><span>]</span><span>.</span><span>T</span></span>
+<span class="giallo-l"><span>        npsensor_bearings</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>empty</span><span>(</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        return</span><span> npsensor_ranges</span><span>,</span><span> npsensor_bearings</span></span></code></pre>
+<p>The function returns numpy arrays of the distance values (in meters) and the sensor bearings (left empty since it is not needed in the Localization module). It uses a notifcation handler to receive the Bluetooth messages and append them to the array:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>self</span><span>,</span><span> uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        msg</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span><span>.</span><span>strip</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> msg</span><span>.</span><span>startswith</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            try</span><span>:</span></span>
+<span class="giallo-l"><span>                parts</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> msg</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>                val</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>float64</span><span>(</span><span>parts</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span><span>      </span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">                self</span><span>.</span><span>sensor_ranges</span><span>.</span><span>append</span><span>(</span><span>val</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">1000.0</span><span>)</span></span></code></pre>
+<p>The <em>observations_count</em> paramater is taken to calculate the angle increment and send to the Artemis. By commanding the <em>SEND</em>, <em>COLLECT_TOF</em>, and <em>COLLECT_PIDANGLE</em> cases, the sensor data is sent to the notification handler.</p>
+<p>Several changes to the Artemis code were made since <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/lab9.md">Lab 9</a>. First, I changed the main loop to automatically send back data once the 360 degree turn is completed, instead of having to command <em>ble.send_command((CMD.COLLECT_PIDANGLE), 0)</em>.</p>
+<p>Additionally, I added a <em>send_increments</em> function to send the sensor data only at the desired increment angles since the size of the arrays returned by <em>perform_observation_loop</em> is expected to match the <em>observations_count</em>. This also drastically speeds up the Bluetooth sending process, only having to send 18 values for 20 degree increments. I initialized a sensorReadings array, where both the ToF data and Kalman Filter values are appended to it. Then, <em>send_increments</em> sends back data at equal increments by tracking the array size. This assumes that the robot turns at a constant rate and does not backtrack. Therefore, the minimum PWM constant was reduced to get slower turns.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> send_increments</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    int</span><span> steps </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">360</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>increment</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);">-</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    int</span><span> interval </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> sensorIndex</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span>steps</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> sensorIndex</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> interval</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>sensorReadings</span><span>[</span><span>i</span><span>]</span><span>)</span><span>;</span><span>  </span></span>
+<span class="giallo-l"><span>        tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>The <em>await</em> function was used in <em>perform_observation_loop</em> to wait for 60 seconds for the 360 degree turn and receiving the Bluetooth data to complete. This also required adding the <em>await</em> and <em>async</em> keywords to <em>get_observation_data</em>:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">await</span><span> loc</span><span>.</span><span>get_observation_data</span><span>(</span><span>)</span><span> </span></span></code></pre><pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">async</span><span style="color: light-dark(#D73A49, #F97583);"> def</span><span style="color: light-dark(#6F42C1, #B392F0);"> get_observation_data</span><span>(</span><span>self</span><span>,</span><span> rot_vel</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">120</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">    self</span><span>.</span><span>obs_range_data</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>obs_bearing_data</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#D73A49, #F97583);"> await</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>robot</span><span>.</span><span>perform_observation_loop</span><span>(</span></span>
+<span class="giallo-l"><span>        rot_vel</span><span>)</span></span></code></pre>
+<p>The Bayes Filter update will fail if the robot is mid-collection process or does not receive all data before the <em>sleep</em> finishes. 60 seconds was experimentally determined as a suitable length of time with around ~15 seconds of room for error.</p>
+<h2 id="collecting-data">Collecting Data</h2>
+<p>After initializing the RealRobot, mapper, and localization objects, the update step of the Bayes Filter is ran on four marked locations. Each trial was started with the robot facing 0 degrees.</p>
+<h3 id="3-2-ft">(-3, -2) ft</h3>
+<p><img src="/lab11/(-3,-2).png" alt="" />
+<img src="/lab11/(-3,-2)data.png" alt="" /></p>
+<p>Belief: (-0.914 m, -0.914 m, 50), or (-3 ft, -3 ft, 50 degrees). Very accurate in the x location, but struggles with the angle.</p>
+<p><video src="/lab11/(-3,-2).MOV" muted controls></video></p>
+<h3 id="5-3-ft">(5, 3) ft</h3>
+<p><img src="/lab11/(5,3).png" alt="" />
+<img src="/lab11/(5,3)data.png" alt="" /></p>
+<p>Belief: (1.524 m, 0.610 m, -170)  or (5 ft, 2.001 ft, -170). Again, accurate in the x direction, off by ~1 ft in y, and off in the angle by ~10 degrees.</p>
+<p><video src="/lab11/(5,3).MOV" muted controls></video></p>
+<h3 id="5-3-ft-1">(5, -3) ft</h3>
+<p><img src="/lab11/(5,-3).png" alt="" />
+<img src="/lab11/(5,-3)data.png" alt="" /></p>
+<p>Belief: (1.829 m, -.610 m, -10) or (6 ft, -2 ft, -10). Off in the x and y directions by ~1 ft, and off in the angle by ~10 degrees.</p>
+<p><video src="/lab11/(5,-3).MOV" muted controls></video></p>
+<h3 id="0-0-ft">(0, 0) ft</h3>
+<p><img src="/lab11/(0,0).png" alt="" />
+<img src="/lab11/(0,0)data.png" alt="" /></p>
+<p>Belief: (0, 0, 30). Extremely accurate in position, 30 degrees off in angle.</p>
+<p><video src="/lab11/(0,0).MOV" muted controls></video></p>
+<p>Overall, it seems that the Bayes Filter biases towards whole values (in ft) and 10 degree angle increments, as I was surprised that its predictions were 3 significant figures close to the truth, or exactly 1 ft off.</p>
+<p>The best results came from the (0, 0) location, which contrasts expectations from the simulation in <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/lab10.md">Lab 10</a>. My theory is that this location is unique in having walls within 1 m on all sides, so predictions are more confident. Also, the sensors struggle with reading longer distances. For example, when running multiple trials, the (5, -3) location would mistakenly output a location near (5, 3) or at points on the 5 ft x-axis. I believe this is from the sensor accurately reading the right wall, but struggling in the longer, open areas to the North and West.</p>
+<p>The errors in the angle could be attributed to misplacing the robot's starting orientation when setting up manually, or an misaligned IMU. I noticed that the IMU would not lay completely flat on the robot's CoM due to a capacitor on the motor, so it must be shifted slightly offset. Therefore, the turning axis may not align with the marked location.</p>
+<h2 id="collaborations">Collaborations</h2>
+<p>ChatGPT was used for debugging the <em>perform_observation_loop</em> function and the notification handler.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab10/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 10: Grid Localization using Bayes Filter</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/" accesskey="."
+    ><span>Lab 12: Path Planning and Execution</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

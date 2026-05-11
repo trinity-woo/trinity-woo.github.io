@@ -1,0 +1,374 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 12: Path Planning and Execution | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 12: Path Planning and Execution" />
+  <meta name="description" content="Full Bluetooth commanded mapping! Navigating through the room with local path planning.&amp;hellip;" />
+  <meta property="og:description" content="Full Bluetooth commanded mapping! Navigating through the room with local path planning.&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-04-28T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 12: Path Planning and Execution</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-04-28T00:00:00+00:00">2026-04-28</time><span
+        class="middot"></span><time
+    datetime="PT0H4M0S">4&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#objective">Objective</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#sending-receiving-and-saving-data">Sending, Receiving, and Saving Data</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#python-mapping">Python Mapping</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#trials">Trials</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#trial-1-minimum-pwm-95">Trial 1: Minimum PWM = 95</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#trial-2-minimum-pwm-110">Trial 2: Minimum PWM = 110</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusions">Conclusions</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Full Bluetooth commanded mapping! Navigating through the room with local path planning. <span id="continue-reading"></span></p>
+<h2 id="objective">Objective</h2>
+<p>The final lab objective is to command the robot to navigate through a set of checkpoints and map out the room with the ToF sensors and the Bayes Filter. This combines the mapping in <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/lab9.md">Lab 9</a> and the localization in <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab12/lab11.md">Lab 11</a>, but with commanded movement between each checkpoint instead of manual.</p>
+<p>I opted for open-loop control, combining the 360 degree orientation control with the previously-built Bluetooth <em>drive</em> commands, allowing the robot to drive forward or backwards, left or right for any speed and duration. With this method, I would have full control of the robot. Although this is slower compared to full closed-loop control and requires more monitoring, it allows me to correct the robot's path and ensure each checkpoint is reached.</p>
+<p>I followed the recommended path in the Lab notes:</p>
+<p><img src="/lab12/trajectory.png" alt="Path" /></p>
+<p>The procedure was:</p>
+<ul>
+<li>Initialize the beliefs and then run the update step of the Bayes Filter at the current point.</li>
+<li>If the output belief matches the expected location, store the ToF and locaation data in a CSV file. Otherwise, rerun the update step.</li>
+<li>Command open-loop control to the next checkpoint, starting at 0 degrees.</li>
+<li>Repeat for every checkpoint.</li>
+</ul>
+<h2 id="sending-receiving-and-saving-data">Sending, Receiving, and Saving Data</h2>
+<p>I first faced issues with the robot's memory, since the IMU, ToF, and Kalman Filter arrays would fill up the available memory and cause the robot to be stuck in its current state (ex. spinning forever). This was not a problem in previous labs since the trials would be under 1 minute. However, to have a continuous navigation trial, I needed to store only the necessary data.</p>
+<p>Therefore, I decided that the ToF and Kalman Filter data would only be sent over Bluetooth, since only the values at each angle increment were needed. When each increment was reached, the latest <em>distanceFront</em> value was sent to the notification handler. I removed the <em>send_increments</em> function from Lab 11.</p>
+<p>In the main loop:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>    ...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>angleTraveled </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>          pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_angle_control</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_PWM</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          int</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> Spa</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          int</span><span> pwm_min </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 110</span><span>;</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> abs</span><span>(</span><span>pwm</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>errorCur</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> pwm_angle_tolerance</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>            driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"><span>            Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">println</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">next angle</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>            tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>            tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>            tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>distanceFront</span><span>)</span><span>;</span><span>  </span></span>
+<span class="giallo-l"><span>            tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>            tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>            angleWanted </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> increment</span><span>;</span></span>
+<span class="giallo-l"><span>            angleTraveled </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> increment</span><span>;</span></span>
+<span class="giallo-l"><span>            Serial</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">println</span><span>(</span><span>angleTraveled</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> pwm_max</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_max</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> pwm_min</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_min</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> RIGHT</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> LEFT</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span><span>   </span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>            driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"><span>            collectPIDangle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>            angleInitialized </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>;</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);">++</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">                digitalWrite</span><span>(</span><span>LED_BUILTIN</span><span>,</span><span> HIGH</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">                delay</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">300</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">                digitalWrite</span><span>(</span><span>LED_BUILTIN</span><span>,</span><span> LOW</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">                delay</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">300</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    ...</span></span></code></pre>
+<p>Then, the notification handler appended the data to an array:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    def</span><span style="color: light-dark(#6F42C1, #B392F0);"> notification_handler</span><span>(</span><span>self</span><span>,</span><span> uuid</span><span>,</span><span> byte_array</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>        msg</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> self</span><span>.</span><span>ble</span><span>.</span><span>bytearray_to_string</span><span>(</span><span>byte_array</span><span>)</span><span>.</span><span>strip</span><span>(</span><span>)</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> msg</span><span>.</span><span>startswith</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Sensor:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">            try</span><span>:</span></span>
+<span class="giallo-l"><span>                parts</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> msg</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>                val</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>float64</span><span>(</span><span>parts</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>.</span><span>split</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>)</span></span>
+<span class="giallo-l"><span>                </span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">                self</span><span>.</span><span>sensor_ranges</span><span>.</span><span>append</span><span>(</span><span>val</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">1000.0</span><span>)</span></span></code></pre>
+<p>A <em>save_data</em> function was called at each checkpoint:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">def</span><span style="color: light-dark(#6F42C1, #B392F0);"> save_data</span><span>(</span><span>filename</span><span>,</span><span> pose</span><span>,</span><span> sensor_ranges</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    file_exists</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> os</span><span>.</span><span>path</span><span>.</span><span>isfile</span><span>(</span><span>filename</span><span>)</span></span>
+<span class="giallo-l"><span>    ranges</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> sensor_ranges</span><span>.</span><span>flatten</span><span>(</span><span>)</span><span>.</span><span>tolist</span><span>(</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    row</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span>pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>,</span><span> pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>]</span><span>,</span><span> pose</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">2</span><span>]</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> ranges</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    with</span><span style="color: light-dark(#005CC5, #79B8FF);"> open</span><span>(</span><span>filename</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">a</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span><span style="color: light-dark(#E36209, #FFAB70);"> newline</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> as</span><span> f</span><span>:</span></span>
+<span class="giallo-l"><span>        writer</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> csv</span><span>.</span><span>writer</span><span>(</span><span>f</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span style="color: light-dark(#D73A49, #F97583);"> not</span><span> file_exists</span><span>:</span></span>
+<span class="giallo-l"><span>            header</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> [</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">theta</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> [</span><span style="color: light-dark(#D73A49, #F97583);">f</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Measurement </span><span style="color: light-dark(#005CC5, #79B8FF);">{</span><span>i</span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#005CC5, #79B8FF);">}</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#D73A49, #F97583);"> for</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">len</span><span>(</span><span>ranges</span><span>)</span><span>)</span><span>]</span></span>
+<span class="giallo-l"><span>            writer</span><span>.</span><span>writerow</span><span>(</span><span>header</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        writer</span><span>.</span><span>writerow</span><span>(</span><span>row</span><span>)</span></span></code></pre>
+<p>I manually determined if the data at each checkpoint was valid and saved it:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>argmax_bel</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> get_max</span><span>(</span><span>loc</span><span>.</span><span>bel</span><span>)</span></span>
+<span class="giallo-l"><span>current_belief</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> mapper</span><span>.</span><span>from_map</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>argmax_bel</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>save_data</span><span>(</span></span>
+<span class="giallo-l"><span style="color: light-dark(#032F62, #9ECBFF);">    &quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Data.csv</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    current_belief</span><span>,</span></span>
+<span class="giallo-l"><span>    loc</span><span>.</span><span>obs_range_data</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre><h2 id="python-mapping">Python Mapping</h2>
+<p>The data were saved in CSV files, with each row containing the state belief, and the 18 ToF measurements. The data were read and plotted to show the state beliefs:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>df</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> pd</span><span>.</span><span>read_csv</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">success2.csv</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">M_TO_FT</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3.28084</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> M_TO_FT</span></span>
+<span class="giallo-l"><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> M_TO_FT</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>plt</span><span>.</span><span>figure</span><span>(</span><span style="color: light-dark(#E36209, #FFAB70);">figsize</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">8</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);">8</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>plt</span><span>.</span><span>scatter</span><span>(</span><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span><span> df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span><span style="color: light-dark(#E36209, #FFAB70);"> s</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">80</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> i</span><span>,</span><span> row</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span> df</span><span>.</span><span>iterrows</span><span>(</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    plt</span><span>.</span><span>text</span><span>(</span></span>
+<span class="giallo-l"><span>        row</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span>        row</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">        str</span><span>(</span><span>i</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        fontsize</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">9</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>arrow_len</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.5</span><span style="color: light-dark(#6A737D, #6A737D);">  #</span><span style="color: light-dark(#6A737D, #6A737D);"> ft</span></span>
+<span class="giallo-l"><span>theta_rad</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>deg2rad</span><span>(</span><span>df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">theta</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>u</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> arrow_len</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>cos</span><span>(</span><span>theta_rad</span><span>)</span></span>
+<span class="giallo-l"><span>v</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> arrow_len</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>sin</span><span>(</span><span>theta_rad</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>plt</span><span>.</span><span>quiver</span><span>(</span></span>
+<span class="giallo-l"><span>    df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span>    df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y_ft</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>,</span></span>
+<span class="giallo-l"><span>    u</span><span>,</span></span>
+<span class="giallo-l"><span>    v</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    angles</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">xy</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    scale_units</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">xy</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    scale</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre>
+<p>The ToF measurements were plotted onto a single graph. The polar coordinates were converted to cartesian. Additionally, the <em>angleOffset</em> and <em>tofOffset</em> values were manually evaluated based on the mapping results.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>x0</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">x</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>.</span><span>values</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000</span></span>
+<span class="giallo-l"><span>y0</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">y</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>]</span><span>.</span><span>values</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>measurement_cols</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>.</span><span>columns</span><span>[</span><span style="color: light-dark(#005CC5, #79B8FF);">3</span><span>:</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>angles_deg</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>arange</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>measurement_cols</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 20</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 20</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>angles_rad</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>deg2rad</span><span>(</span><span>angles_deg</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> angle_offset</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>plt</span><span>.</span><span>figure</span><span>(</span><span style="color: light-dark(#E36209, #FFAB70);">figsize</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">10</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 8</span><span>)</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>plt</span><span>.</span><span>scatter</span><span>(</span></span>
+<span class="giallo-l"><span>    x0</span><span>,</span></span>
+<span class="giallo-l"><span>    y0</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    s</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">150</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    color</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">black</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    marker</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">x</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">    label</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span><span style="color: light-dark(#032F62, #9ECBFF);">Checkpoints</span><span style="color: light-dark(#032F62, #9ECBFF);">&#39;</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> i</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> range</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">len</span><span>(</span><span>df</span><span>)</span><span>)</span><span>:</span></span>
+<span class="giallo-l"><span>    plt</span><span>.</span><span>text</span><span>(</span></span>
+<span class="giallo-l"><span>        x0</span><span>[</span><span>i</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span style="color: light-dark(#005CC5, #79B8FF);"> 40</span><span>,</span></span>
+<span class="giallo-l"><span>        y0</span><span>[</span><span>i</span><span>]</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span style="color: light-dark(#005CC5, #79B8FF);"> 40</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">        str</span><span>(</span><span>i</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        fontsize</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">9</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>colors</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> plt</span><span>.</span><span>cm</span><span>.</span><span>tab20</span><span>(</span><span>np</span><span>.</span><span>linspace</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> len</span><span>(</span><span>measurement_cols</span><span>)</span><span>)</span><span>)</span></span>
+<span class="giallo-l"><span>tofOffset</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span></span>
+<span class="giallo-l"><span>angleOffset</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> np</span><span>.</span><span>deg2rad</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">20</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">for</span><span> angle</span><span>,</span><span> col</span><span>,</span><span> color</span><span style="color: light-dark(#D73A49, #F97583);"> in</span><span style="color: light-dark(#005CC5, #79B8FF);"> zip</span><span>(</span><span>angles_rad</span><span>,</span><span> measurement_cols</span><span>,</span><span> colors</span><span>)</span><span>:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    r</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> df</span><span>[</span><span>col</span><span>]</span><span>.</span><span>values</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    xm</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> x0</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> (</span><span>r</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> tofOffset</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>cos</span><span>(</span><span>angle</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> angleOffset</span><span>)</span></span>
+<span class="giallo-l"><span>    ym</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span> y0</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> (</span><span>r</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> tofOffset</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> np</span><span>.</span><span>sin</span><span>(</span><span>angle</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> angleOffset</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    plt</span><span>.</span><span>scatter</span><span>(</span></span>
+<span class="giallo-l"><span>        xm</span><span>,</span></span>
+<span class="giallo-l"><span>        ym</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        s</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);">20</span><span>,</span></span>
+<span class="giallo-l"><span style="color: light-dark(#E36209, #FFAB70);">        color</span><span style="color: light-dark(#D73A49, #F97583);">=</span><span>color</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span></code></pre><h2 id="trials">Trials</h2>
+<p>Multiple trials were tested at various minimum speeds.</p>
+<h3 id="trial-1-minimum-pwm-95">Trial 1: Minimum PWM = 95</h3>
+<p>The full path trajectory is shown below (split into 3 video segments):</p>
+<p><video src="/lab12/trial1_1.mp4" controls></video>
+<video src="/lab12/trial1_2.mp4" controls></video>
+<video src="/lab12/trial1_3.mp4" controls></video></p>
+<p>The Python command side was also recorded (note that the time is longer due to retrying multiple checkpoints):</p>
+<p><video src="/lab12/lab12.mp4" controls></video></p>
+<p>Then, the resulting position and angle beliefs were printed, as well as the map generated from the ToF readings.</p>
+<p><img src="/lab12/trial1pos.png" alt="trial1pos" />
+<img src="/lab12/trial1map.png" alt="trial1map" /></p>
+<h3 id="trial-2-minimum-pwm-110">Trial 2: Minimum PWM = 110</h3>
+<p>I decided to increase the robot's minimum PWM to speed up the pathing process from the previous trial. The tradeoff in the improved speed was the ToF measurement accuracy.</p>
+<p><video src="/lab12/trial2_1.mp4" controls></video>
+<video src="/lab12/trial2_2.mp4" controls></video></p>
+<p><video src="/lab12/lab12_2.webm" controls></video></p>
+<p>The final results were as follows:</p>
+<p><img src="/lab12/trial2pos.png" alt="trial2pos" />
+<img src="/lab12/trial2map.png" alt="trial2map" /></p>
+<h2 id="conclusions">Conclusions</h2>
+<p>Overall, Trial 2 resulted in a more accurate state measurement and a more reliable mapping compared to Trial 1. The increase in PWM actually allowed the turning to be more centered about the axis, since both set of wheels could overcome friction easily. The entire mapping sequence was ~9 minutes.</p>
+<p>Note that the robot struggled in the top right corner due to the uneven flooring. The robot also struggled with modeling the bottom wall indent and the box in the top right, just like in Lab 9. Generally, the right side was difficult to map, and I would redo the measurement at the (5, -3) location due to incorrect state beliefs.</p>
+<p>The corners and the left side were mapped fairly well due to the higher amount of checkpoints, whereas right side only had two checkpoints. To improve the mapping, additional checkpoints could be added between 4 and 5, as well as 5 and 6. An algorithm to determine ToF outliers and exclude them from the map could also be considered.</p>
+<h2 id="collaborations">Collaborations</h2>
+<p>ChatGPT was used for the matplotlib functions and mapping.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab11/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 11: Grid Localization (Real-World)</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

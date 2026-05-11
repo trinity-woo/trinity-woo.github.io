@@ -1,0 +1,426 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 6: Orientation PID Control | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 6: Orientation PID Control" />
+  <meta name="description" content="Orientation PID with the IMU!&amp;hellip;" />
+  <meta property="og:description" content="Orientation PID with the IMU!&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-03-10T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 6: Orientation PID Control</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-03-10T00:00:00+00:00">2026-03-10</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#orientation-control">Orientation Control</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#gyroscope-measurement">Gyroscope Measurement</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#gyroscope-limitations">Gyroscope Limitations</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#pid-control">PID Control</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#tuning-and-results">Tuning and Results</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#comparison-without-wind-up-protection">Comparison without Wind-up Protection</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Orientation PID with the IMU! <span id="continue-reading"></span></p>
+<h3 id="prelab">Prelab</h3>
+<p>First, to improve the sampling rate from Lab 5, I stored all the values into arrays and created a <em>send_data</em> function that loops through and sends them over Bluetooth. This significantly improved the performance of the PID control, running at ~100 hz and much faster than the sensor rate:</p>
+<p><img src="/lab6/sampling.png" alt="" /></p>
+<p>The <em>send_data</em> function is run at after PID control finishes if a <em>send</em> command flag is turned on (so the gains can more quickly be tuned without waiting for data from the previous trial to finish sending) or if Bluetooth is disconnected (to prevent loss of data).</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> send_data</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> tof_count</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T_TOF:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>tofArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; Front Distance(mm):</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>tofArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; Right Distance(mm):</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>tofArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> curIMU</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 4</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T_IMU:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Gyro:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">, </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>gyroArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  for</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">int</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 4</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> pwm_count</span><span>;</span><span> i </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 5</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">T_PWM:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>pwmArray</span><span>[</span><span>i</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">; </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">PWM value: </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>pwmArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Gains: </span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>pwmArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>pwmArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);"> &quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>pwmArray</span><span>[</span><span>i </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span style="color: light-dark(#005CC5, #79B8FF);"> 4</span><span>]</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>With this architecture, commands are easily sent while PID control is running, allowing us to change the distance setpoint and orientation for future labs.</p>
+<p>The PID values for linear control were retuned, and the control was much smoother:</p>
+<p><img src="/lab6/trial.png" alt="" /></p>
+<h3 id="orientation-control">Orientation Control</h3>
+<p>The goal of this lab is for the car to return to its original orientation after external disturbances.</p>
+<h4 id="gyroscope-measurement">Gyroscope Measurement</h4>
+<p>First, the yaw data was graphed. We observe that there is significant drift even while the car is still.</p>
+<p><img src="/lab6/gyrobias.png" alt="" /></p>
+<p>The onboard digital motion processor (DMP) was implemented to measure the orientation in quaternions and provide more accurate angle measurements.</p>
+<p>Referencing the <em>Example6_DMP_Quat9_Orientation</em> script, the DMP was initialized in the setup function. Additionally, the <em>ICM_20948_C.h</em> class was edited to include <em>#define ICM_20948_USE_DMP</em>.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">bool</span><span> success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> false</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">while</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> true</span><span>;</span></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">initializeDMP</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">resetDMP</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">resetFIFO</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">enableFIFO</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">enableDMP</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">enableDMPSensor</span><span>(</span><span>INV_ICM20948_SENSOR_GAME_ROTATION_VECTOR</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    success </span><span style="color: light-dark(#D73A49, #F97583);">&amp;=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">setDMPODRrate</span><span>(</span><span>DMP_ODR_Reg_Quat6</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>A function <em>get_yaw</em> was written to convert the quaternion measurements into yaw angles.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> get_yaw</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#005CC5, #79B8FF);">    icm_20948_DMP_data_t</span><span> dmp</span><span>;</span></span>
+<span class="giallo-l"><span>    myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">readDMPdataFromFIFO</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">&amp;</span><span>dmp</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    if</span><span> (</span><span>(</span><span>myICM</span><span>.</span><span>status</span><span style="color: light-dark(#D73A49, #F97583);"> !=</span><span> ICM_20948_Stat_Ok</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> (</span><span>myICM</span><span>.</span><span>status</span><span style="color: light-dark(#D73A49, #F97583);"> !=</span><span> ICM_20948_Stat_FIFOMoreDataAvail</span><span>)</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    if</span><span> (</span><span>(</span><span>dmp</span><span>.</span><span>header</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;</span><span> DMP_header_bitmap_Quat6</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    qx </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">double</span><span>)</span><span> dmp</span><span>.</span><span>Quat6</span><span>.</span><span>Data</span><span>.</span><span>Q1</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1073741824</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span><span> </span></span>
+<span class="giallo-l"><span>    qy </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">double</span><span>)</span><span> dmp</span><span>.</span><span>Quat6</span><span>.</span><span>Data</span><span>.</span><span>Q2</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1073741824</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span><span> </span></span>
+<span class="giallo-l"><span>    qz </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>(</span><span style="color: light-dark(#D73A49, #F97583);">double</span><span>)</span><span> dmp</span><span>.</span><span>Quat6</span><span>.</span><span>Data</span><span>.</span><span>Q3</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1073741824</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span><span> </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    qw </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> sqrt</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#6F42C1, #B392F0);"> min</span><span>(</span><span>(</span><span>(</span><span>qx </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qx</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> (</span><span>qy </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qy</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> +</span><span> (</span><span>qz </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qz</span><span>)</span><span>)</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    siny </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> (</span><span>qw </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qz </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> qx </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qy</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    cosy </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> (</span><span>qy </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qy </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> qz </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> qz</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>    gyro_yaw </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">float</span><span>)</span><span>(</span><span style="color: light-dark(#6F42C1, #B392F0);">atan2</span><span>(</span><span>siny</span><span>,</span><span> cosy</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span> PI</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Initially, the yaw values lagged behind and take a second to update due to the FIFO buffer filling with values between the initializing of the DMP and collecting values. The buffer was cleared when commanding <em>COLLECT_PIDANGLE</em>:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>  success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">resetFIFO</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span></code></pre>
+<p>Now, there is much less drift, varying around +- 0.5 degrees while keeping the car still.</p>
+<p><img src="/lab6/gyrodmp.png" alt="" /></p>
+<p>The real-time output of the yaw angle is shown below and appears to be extremely accurate and quick to update:</p>
+<p><video src="/lab6/dmp.mp4" controls muted></video></p>
+<h4 id="gyroscope-limitations">Gyroscope Limitations</h4>
+<p>The maximum rotational speed the gyroscope can read is 2000 degrees per second, or ~5.5 full rotations per second. Although this can be configured in the library's <em>GYRO_CONFIG_1</em>, the default value is sufficiently high for our purposes. The PID control and mapping will likely not require over 2 full rotations per second.</p>
+<p>The sampling rate was tested with Serial print commands:</p>
+<p><img src="/lab6/yawsampling.png" alt="" /></p>
+<p>We observe that the gyroscope's sampling rate is around every ~65 ms, or ~15 hz. This is not ideal, as the angular PID control may be using old gyroscope data. For comparison, the linear PID control runs at ~100 hz as found in <a href="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/#prelab">the Prelab</a>.</p>
+<h4 id="pid-control">PID Control</h4>
+<p>A <em>CHANGE_SETPOINTS</em> command was written to change the desired distance and angle over Bluetooth.</p>
+<p>Overall, the angle PID structure was similar to that of the linear PID's flags and functions. Gain values for angular control (Kpa, Kia, and Kda) were initialized, and a function <em>PID_angle_control</em> was written to output PWM values with PID control.</p>
+<p>Similarly to the linear control, the derivative term included a lowpass filter and eliminating the derivative kick. The yaw is based off of the quaternion measurements, so it is reasonable to take its derivative. Wind-up protection was implemented similar to Lab 5, constraining the integral PID component.</p>
+<p>To prevent the car from rotating the long direction (for example, going from 1 to 359 degrees, we simply want to rotate -2 degrees), we map the <em>dInput</em> to [-180, 180] which represents the shortest path between two angles. The same is done for <em>errorCur</em>.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span> last_filtered_d_angle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span> filtered_d_angle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">double</span><span> lastInputAngle</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_angle_control</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>  </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  int</span><span> t </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> tCur </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> micros</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000000</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span><span> </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> angleCurrent </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> gyro_yaw</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> angleCurrent </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> angleWanted</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>errorCur </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span>)</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">-=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>errorCur </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">180</span><span>)</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> dt </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> tCur </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> tPrev</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>dt </span><span style="color: light-dark(#D73A49, #F97583);">&lt;=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>)</span><span> dt </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">001</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  errorSum </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> dt</span><span>;</span></span>
+<span class="giallo-l"><span>  errorSum </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> constrain</span><span>(</span><span>errorSum</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">100</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  errorDerivative </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>errorCur </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> errorPrev</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span> dt</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  double</span><span> dInput </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> angleCurrent </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> lastInputAngle</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>dInput </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 180</span><span>)</span><span> dInput </span><span style="color: light-dark(#D73A49, #F97583);">-=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  if</span><span> (</span><span>dInput </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">180</span><span>)</span><span> dInput </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 360</span><span>;</span></span>
+<span class="giallo-l"><span>  lastInputAngle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> angleCurrent</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> d </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span>Kda </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> dInput</span><span>;</span></span>
+<span class="giallo-l"><span>  filtered_d_angle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> dalphaa </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> d </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> dalphaa</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> last_filtered_d_angle</span><span>;</span></span>
+<span class="giallo-l"><span>  last_filtered_d_angle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> filtered_d_angle</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Kpa </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> filtered_d_angle </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> Kia </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> errorSum</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  tPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> tCur</span><span>;</span></span>
+<span class="giallo-l"><span>  errorPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> errorCur</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Bluetooth commands the angular PID on/off. If turned off, the motors stop and the Arduino sends all its array data at once over Bluetooth. Although this results in some waiting, I found that the trade-off is worth it compared to the low frequency from real-time sending.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span> COLLECT_PIDANGLE:</span></span>
+<span class="giallo-l"><span>      {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> collect</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> robot_cmd</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">get_next_value</span><span>(</span><span>collect</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          return</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>collect</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>          collectPIDangle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>          errorSum </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>          errorPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>          tPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> micros</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1000000</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          bool</span><span> success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          while</span><span> (</span><span style="color: light-dark(#D73A49, #F97583);">!</span><span>success</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>            success </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>myICM</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">resetFIFO</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> ==</span><span> ICM_20948_Stat_Ok</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>          collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>          collectPIDangle </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>send</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">            send_data</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          }</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>The main loop commands the car to turn left or right using those PWM values. I implemented a low angle tolerance of 1 degree.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collectPIDangle</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>        pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_angle_control</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        get_PID</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> Spa</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> pwm_min </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> abs</span><span>(</span><span>pwm</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);"> 100</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>errorCur</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> pwm_angle_tolerance</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> pwm_max</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_max</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> pwm_min</span><span>)</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_min</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> RIGHT</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span>pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span>)</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> LEFT</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          else</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> STOP</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        switch</span><span> (</span><span>driveState</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          case</span><span> FORWARD</span><span>:</span><span style="color: light-dark(#6F42C1, #B392F0);"> forward</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span><span style="color: light-dark(#D73A49, #F97583);"> break</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          case</span><span> BACK</span><span>:</span><span style="color: light-dark(#6F42C1, #B392F0);"> back</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span><span style="color: light-dark(#D73A49, #F97583);"> break</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          case</span><span> LEFT</span><span>:</span><span style="color: light-dark(#6F42C1, #B392F0);"> left</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span><span style="color: light-dark(#D73A49, #F97583);"> break</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          case</span><span> RIGHT</span><span>:</span><span style="color: light-dark(#6F42C1, #B392F0);"> right</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span><span style="color: light-dark(#D73A49, #F97583);"> break</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          case</span><span> STOP</span><span>:</span><span style="color: light-dark(#6F42C1, #B392F0);"> stop</span><span>(</span><span>)</span><span>;</span><span style="color: light-dark(#D73A49, #F97583);"> break</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>While testing the <em>stop</em> function, I noticed that the right motor would have a delayed stop, around ~0.5 seconds after the left motor. Therefore, I implemented active braking:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">void</span><span style="color: light-dark(#6F42C1, #B392F0);"> stop</span><span>(</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  analogWrite</span><span>(</span><span>LEFT_1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  analogWrite</span><span>(</span><span>LEFT_2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  analogWrite</span><span>(</span><span>RIGHT_1</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  analogWrite</span><span>(</span><span>RIGHT_2</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h4 id="tuning-and-results">Tuning and Results</h4>
+<p>A procedure similar to that of Lab 5 was followed and the following gains were chosen:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Kp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.06</span></span>
+<span class="giallo-l"><span>Ki</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.002</span></span>
+<span class="giallo-l"><span>Kd</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.05</span></span>
+<span class="giallo-l"><span>Sp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.9</span></span>
+<span class="giallo-l"><span>dalpha</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.15</span></span></code></pre>
+<p>I first started with 0 Ki and Kd, and increased the Kp until the car started oscillating about an angle. To help eliminate steady state error, I slowly increased Ki until the system reached instability. I sent commands between 0 and 90 degrees to test wide turns. Kd was added to decrease disturbances, where I poked the side of the car.</p>
+<p>To help the debugging process, graphs of the set desired angle, the measured angle, and the PWM values were created.</p>
+<p><img src="/lab6/graph1.png" alt="" />
+<img src="/lab6/graph2.png" alt="" /></p>
+<p>A successful trial and the resulting data is shown below, testing the angle commands with various sized jumps:</p>
+<p><video src="/lab6/trial3.mov" controls></video></p>
+<p><img src="/lab6/trial1.png" alt="" /></p>
+<p>Note that the graph jumps when wrapping around from either the 180 or -180 end. Since this was a visual problem and does not affect the performance of the car, I decided to fix this in future labs.</p>
+<h4 id="comparison-without-wind-up-protection">Comparison without Wind-up Protection</h4>
+<p>The attempt below demonstrates the effect of the car without the wind-up protection:</p>
+<p><video src="/lab6/nowindup.mov" controls></video></p>
+<p><img src="/lab6/nowindup.png" alt="" />
+<img src="/lab6/nowinduppwm.png" alt="" /></p>
+<p>The effects of overshoot are much more apparent as the integral term is no longer constrained. This is further shown in the PWM graph (which actually displays the PID control output u) with much higher values. Therefore, windup is necessary to prevent the car from spiraling out of control and spinning indefinitely with large overshoots.</p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://fast.synthghost.com/lab-5-linear-pid-control/">Stephan's site</a> was referenced for implementing the IMU digital motion processor and fixing the yaw drift.</p>
+<p>ChatGPT was used for debugging the <em>send_data</em> function, notification handlers, and graphing data.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab5/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 5: Linear PID Control</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab7/" accesskey="."
+    ><span>Lab 7: Kalman Filter</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>

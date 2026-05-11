@@ -1,0 +1,357 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Lab 5: Linear PID Control | Trinity Wu</title>
+  <meta property="og:site_name" content="Trinity Wu" />
+  <meta property="og:title" content="Lab 5: Linear PID Control" />
+  <meta name="description" content="Position control into a wall, tuning PID gain values, and extrapolating ToF values.&amp;hellip;" />
+  <meta property="og:description" content="Position control into a wall, tuning PID gain values, and extrapolating ToF values.&amp;hellip;" />
+  <meta property="og:url" content="https://trinity-woo.github.io/pages/projects/MAE5910/lab5/" />
+  <link rel="canonical" href="https://trinity-woo.github.io/pages/projects/MAE5910/lab5/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-03-02T00:00:00+00:00" />
+  <link rel="alternate" type="application/atom+xml" href="https://trinity-woo.github.io/atom.xml" title="Trinity Wu | Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://trinity-woo.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://trinity-woo.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #eff1f5; --header: #e6e9ef;} :root.dark{--bg: #1e2030; --header: #181926;}</style>
+  <meta name="theme-color" data-light="#e6e9ef" data-dark="#181926" content="#e6e9ef" />
+  <script src="https://trinity-woo.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <a title="Go to home page [Alt + !]" accesskey="!"
+          href="https://trinity-woo.github.io/"
+          class="text-2xl font-semibold truncate">Trinity Wu</a>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://trinity-woo.github.io/projects/"
+          >Projects</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Lab 5: Linear PID Control</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-03-02T00:00:00+00:00">2026-03-02</time><span
+        class="middot"></span><time
+    datetime="PT0H6M0S">6&nbsp;min</time><span
+      class="middot"></span>
+</div>
+
+  </header>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#prelab">Prelab</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#position-control">Position Control</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#proportional-control">Proportional Control</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#sensor-sampling-rate">Sensor Sampling Rate</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#extrapolation">Extrapolation</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#derivative-control">Derivative Control</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#integrator-control">Integrator Control</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#tuning-and-results">Tuning and Results</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#collaborations">Collaborations</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><p>Position control into a wall, tuning PID gain values, and extrapolating ToF values. <span id="continue-reading"></span></p>
+<h3 id="prelab">Prelab</h3>
+<p>To help implement the PID controller, a proper debugging system was first set up.</p>
+<p>A global flag <em>collectPID</em> is set on/off by the computer. When the flag is set to true, PID control and data collection begins. When the flag is set to false, the data collection stops and the car hard stops.</p>
+<p>A notification handler is implemented to collect the debugging data into arrays. This data includes the timestamps, ToF and IMU sensor data, and the PWM values sent to the motors. An example of the logged data is shown below:</p>
+<p><img src="/lab5/log.png" alt="" /></p>
+<p>Additionally, the <em>CHANGE_GAINS</em> command was written for the computer to change the gain values, allowing the gain values to be frequently tweaked over Bluetooth without needing to reprogram the Artemis. This command's code was analogous to <em>SEND_THREE_FLOATS</em> in Lab 1. A speed factor <em>Sp</em> was also created to test different max speeds of the motor.</p>
+<p>The <em>DRIVE</em> command was written to autonomously control the car's directions. Although this lab will only use the forward and back directions, the <em>driveState</em> value is still manipulated.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">int</span><span> driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> STOP</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> FORWARD</span><span style="color: light-dark(#005CC5, #79B8FF);"> 1</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> BACK</span><span style="color: light-dark(#005CC5, #79B8FF);"> 2</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> LEFT</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">#</span><span style="color: light-dark(#D73A49, #F97583);">define</span><span style="color: light-dark(#6F42C1, #B392F0);"> RIGHT</span><span style="color: light-dark(#005CC5, #79B8FF);"> 4</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">switch</span><span>(</span><span>driveState</span><span>)</span><span> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span style="color: light-dark(#6F42C1, #B392F0);"> FORWARD</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    forward</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    break</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span style="color: light-dark(#6F42C1, #B392F0);"> BACK</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    back</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    break</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span style="color: light-dark(#6F42C1, #B392F0);"> LEFT</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    left</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    break</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span style="color: light-dark(#6F42C1, #B392F0);"> RIGHT</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    right</span><span>(</span><span>abs_pwm</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    break</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    case</span><span style="color: light-dark(#6F42C1, #B392F0);"> STOP</span><span>:</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">    stop</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    break</span><span>;</span></span>
+<span class="giallo-l"><span>}</span><span>  </span></span></code></pre>
+<p>A hard stop was implemented in the case that the Bluetooth central loop disconnects, all data collection and motors stop:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">  stop</span><span>(</span><span>)</span><span>;</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> stop motors and sensors if Bluetooth disconnects</span></span>
+<span class="giallo-l"><span>  collectIMU </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>  collectTOF </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>  collectPID </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>  distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">stopRanging</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">stopRanging</span><span>(</span><span>)</span><span>;</span></span></code></pre><h3 id="position-control">Position Control</h3>
+<p>The goal of this lab is to have the robot drive as fast as possible towards a wall and stop exactly 1ft (304mm) away. We use the following equation for full PID control:</p>
+<p>$$
+u(t) = K_p e(t) + K_i \int_0^t e(t) \ dt + K_d\frac{de(t)}{dt}
+$$</p>
+<h4 id="proportional-control">Proportional Control</h4>
+<p>First, only proportional control was implemented to make debugging easier.</p>
+<p>We take <em>u</em> as a value 0-100 representing the percent of full speed the motors run at. Therefore, if an error of 2000mm corresponds to u = 100, then Kp is around 0.05. We use this as an initial guess before further tuning.</p>
+<p>A function <em>PID_control</em> calculates and returns u:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">float</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_control</span><span> (</span><span>)</span><span> {</span><span> </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    float</span><span> tCur </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> micros</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">1000000</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span><span style="color: light-dark(#6A737D, #6A737D);"> //</span><span style="color: light-dark(#6A737D, #6A737D);"> seconds</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    float</span><span> distanceCurrent </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> distanceFront</span><span>;</span><span> </span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    float</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> distanceCurrent </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> distanceWanted</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    float</span><span> u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Kp</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>errorCur</span><span>;</span><span> </span></span>
+<span class="giallo-l"><span>    tPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> tCur</span><span>;</span></span>
+<span class="giallo-l"><span>    errorPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> errorCur</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">    return</span><span> u</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Then, in the main loop, while <em>collectPID</em> is on, the u value is scaled into a PWM value, and a command is sent to the motors to run forward or backwards depending on the sign. The deadband is accounted for by setting the pwm value to the minimum value to overcome static friction if below. To ensure that the car stops at the target position, the pwm value is set to 0 if it falls within a set tolerance.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collectPID</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> pwm_max </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 255</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>Sp</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> pwm_min </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 35</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        int</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        tPrev </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">        get_PID</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_control</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span style="color: light-dark(#6F42C1, #B392F0);">abs</span><span>(</span><span>pwm</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &lt;</span><span> pwm_tolerance</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>          driveState </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span> {</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> abs</span><span>(</span><span>pwm</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> pwm_max</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">100</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> pwm_max</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_max</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span>abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span> pwm_tolerance </span><span style="color: light-dark(#D73A49, #F97583);">&amp;&amp;</span><span> abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">&lt;</span><span> pwm_min</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span>          abs_pwm </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> pwm_min</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p>The Kp value was increased until oscillation at 0.08.</p>
+<p><img src="/lab5/Poscillation.png" alt="" /></p>
+<h4 id="sensor-sampling-rate">Sensor Sampling Rate</h4>
+<p><a rel="external" href="https://www.pololu.com/product/3415">From the ToF website</a>, "...the maximum sampling rate for medium and long distance modes is 30 Hz". We want the sensor to have the highest sampling rate possible so that the PID control can use the most updated data and have the most accurate position control.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>  distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">setTimingBudgetInMs</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">30</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>  distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">setTimingBudgetInMs</span><span>(</span><span style="color: light-dark(#005CC5, #79B8FF);">30</span><span>)</span><span>;</span></span></code></pre><h4 id="extrapolation">Extrapolation</h4>
+<p>To extrapolate ToF values based on recent sensor values, we first determine the frequency of ToF sensor data and PID control loop with Serial prints.</p>
+<p><img src="/lab5/collect.png" alt="" /></p>
+<p>The collection of ToF sensor data and PID control are already decoupled since the main loop reads each flag separately. The PID control uses the latest value of <em>distanceFront</em>, even though the ToF is not updated as frequently. The PID control runs at ~30hz, and the ToF sensor runs at ~100hz. These speeds are slower than expected and may be due to Bluetooth sending.</p>
+<p>To estimate ToF data to match the speed of the PID control, the past two data points are stored to get the slope and relate to the current point.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">      if</span><span> (</span><span>collectTOF</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">        if</span><span> (</span><span>distanceSensorFront</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> &amp;&amp;</span><span> distanceSensorSide</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">checkForDataReady</span><span>(</span><span>)</span><span>)</span><span> {</span></span>
+<span class="giallo-l"><span style="color: light-dark(#6F42C1, #B392F0);">          get_TOF</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span><span style="color: light-dark(#D73A49, #F97583);"> else</span><span style="color: light-dark(#D73A49, #F97583);"> if</span><span> (</span><span>tof_count </span><span style="color: light-dark(#D73A49, #F97583);">&gt;</span><span style="color: light-dark(#005CC5, #79B8FF);"> 3</span><span>)</span><span> {</span><span style="color: light-dark(#6A737D, #6A737D);">  //</span><span style="color: light-dark(#6A737D, #6A737D);"> extrapolation</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          float</span><span> slope </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>distanceFront </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> last_distanceFront</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span> (</span><span>t </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> last_ttof</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          float</span><span> t_pid </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> millis</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">          float</span><span> dt </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>t_pid </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> ttof</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);">/</span><span style="color: light-dark(#005CC5, #79B8FF);">1000</span><span style="color: light-dark(#005CC5, #79B8FF);">.</span><span style="color: light-dark(#005CC5, #79B8FF);">0</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>          distanceFront </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> slope </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> dt  </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> distanceFront</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">clear</span><span>(</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">Extrapolated:</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>t</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span style="color: light-dark(#032F62, #9ECBFF);">;</span><span style="color: light-dark(#032F62, #9ECBFF);">&quot;</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">append</span><span>(</span><span>distanceFront</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>          tx_characteristic_string</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">writeValue</span><span>(</span><span>tx_estring_value</span><span>.</span><span style="color: light-dark(#6F42C1, #B392F0);">c_str</span><span>(</span><span>)</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>      }</span></span></code></pre>
+<p><img src="/lab5/extrapolate.png" alt="" /></p>
+<p>By comparing the raw and extrapolated data, we observe that the extrapolated values are not updated as frequently as the raw values since it already runs relatively slowly. It somewhat smoothens out the flat raw values. To improve performance and sampling rate, messages could be first stored in arrays, and then iterated and sent over Bluetooth.</p>
+<h4 id="derivative-control">Derivative Control</h4>
+<p>Next, derivative control was implemented by adding to the <em>PID_control</em> function:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>  errorDerivative </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> (</span><span>errorCur </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> errorPrev</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> /</span><span> dt</span><span>;</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Kp</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>errorCur </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> Kd</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>errorDerivative</span></span></code></pre>
+<p>By plotting the car's motion, I decided it would be necessary to include a low pass filter and eliminate the kick due to the rapid, jittery motions.</p>
+<p><img src="/lab5/Dunfiltered.png" alt="" /></p>
+<p>For the low pass filter, I added a <em>dalpha</em> that could be changed through Bluetooth. To eliminate the kick, I replaced the derivative of the error to the last input.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  void</span><span style="color: light-dark(#6F42C1, #B392F0);"> PID_control</span><span>(</span><span>)</span><span>{</span></span>
+<span class="giallo-l"><span>    ...</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  double</span><span> dInput </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Input </span><span style="color: light-dark(#D73A49, #F97583);">-</span><span> lastInput</span><span>;</span></span>
+<span class="giallo-l"><span>  lastInput </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Input</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> d </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span>Kd </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> dInput</span><span>;</span></span>
+<span class="giallo-l"><span>  filtered_d </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> dalpha </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> d </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> (</span><span style="color: light-dark(#005CC5, #79B8FF);">1</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span> dalpha</span><span>)</span><span style="color: light-dark(#D73A49, #F97583);"> *</span><span> last_filtered_d</span><span>;</span></span>
+<span class="giallo-l"><span>  last_filtered_d </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> filtered_d</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Kp </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> filtered_d</span><span>;</span></span>
+<span class="giallo-l"><span>  ...</span></span>
+<span class="giallo-l"><span>  }</span></span></code></pre>
+<p>For the example below, alpha = 0.75, Kp = 0.05, and Kd = 0.1.</p>
+<p><img src="/lab5/Dfiltered.png" alt="" /></p>
+<h4 id="integrator-control">Integrator Control</h4>
+<p>The last element to add to the <em>PID_control</em> is the integrator.</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="cpp"><span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span>  errorSum </span><span style="color: light-dark(#D73A49, #F97583);">+=</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> dt</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> windup </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span style="color: light-dark(#6F42C1, #B392F0);"> constrain</span><span>(</span><span>Ki</span><span style="color: light-dark(#D73A49, #F97583);">*</span><span>errorSum</span><span>,</span><span style="color: light-dark(#D73A49, #F97583);"> -</span><span style="color: light-dark(#005CC5, #79B8FF);">200</span><span>,</span><span style="color: light-dark(#005CC5, #79B8FF);"> 200</span><span>)</span><span>;</span></span>
+<span class="giallo-l"><span style="color: light-dark(#D73A49, #F97583);">  float</span><span> u </span><span style="color: light-dark(#D73A49, #F97583);">=</span><span> Kp </span><span style="color: light-dark(#D73A49, #F97583);">*</span><span> errorCur </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> filtered_d </span><span style="color: light-dark(#D73A49, #F97583);">+</span><span> windup</span><span>;</span></span>
+<span class="giallo-l"><span>...</span></span></code></pre>
+<p>To prevent wind-up error, where the integral term keeps growing without limit, the term is constrained. To demonstrate the difference with and without wind-up protection, the robot is started far from the wall to accumulate error.</p>
+<p>Without wind-up protection:</p>
+<p><img src="/lab5/nowindup.png" alt="" /></p>
+<p>With wind-up protection:</p>
+<p><img src="/lab5/windup.png" alt="" /></p>
+<p>We observe that the windup protection prevents the car from accelerating sharply into the wall and reduces the steady state error.</p>
+<h4 id="tuning-and-results">Tuning and Results</h4>
+<p>The heuristic process from lecture was followed to tune the gains:</p>
+<p><img src="/lab5/tuning.png" alt="" /></p>
+<p>The final values were selected:</p>
+<pre class="giallo" style="color-scheme: light dark; color: light-dark(#24292E, #E1E4E8); background-color: light-dark(#FFFFFF, #24292E);"><code data-lang="python"><span class="giallo-l"><span>Kp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.05</span></span>
+<span class="giallo-l"><span>Ki</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.001</span></span>
+<span class="giallo-l"><span>Kd</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.12</span></span>
+<span class="giallo-l"><span>Sp</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.5</span></span>
+<span class="giallo-l"><span>dalpha</span><span style="color: light-dark(#D73A49, #F97583);"> =</span><span style="color: light-dark(#005CC5, #79B8FF);"> 0.15</span></span></code></pre>
+<p>Three successful trials are shown below, tested ~1m from the wall:</p>
+<p><video src="/lab5/trial1.mp4" controls></video></p>
+<p><video src="/lab5/trial2.mp4" controls></video></p>
+<p><video src="/lab5/trial3.mp4" controls></video></p>
+<p>Additionally, the car settles into the desired position after external disturbances:</p>
+<p><video src="/lab5/disturbance.mp4" controls></video></p>
+<p>The maximum linear speed acheived, calculated by the front ToF sensor, was determined to be around 0.48 m/s.</p>
+<p>To improve the position control's overshoot, steady state error, maximum speed, and maximum distance from the wall, is essential to increase the sampling rate of the PID_control and sensors, as well as to test the car on non-carpeted floor.</p>
+<h3 id="collaborations">Collaborations</h3>
+<p><a rel="external" href="https://fast.synthghost.com/lab-5-linear-pid-control/">Stephan's site</a> was referenced for initial gain values, PID control setup, the idea of adding a speed factor, and wind-up protection.</p>
+<p><a rel="external" href="http://brettbeauregard.com/blog/2011/04/improving-the-beginners-pid-derivative-kick/">Brett's site</a> was referenced for implementing the derivative kick.</p>
+<p>ChatGPT was used for notification handling, plotting, finding the maximum linear speed, and debugging the extrapolation algorithm.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab4/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Lab 4: Motors and Open Loop Control</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://trinity-woo.github.io/pages/projects/MAE5910/lab6/" accesskey="."
+    ><span>Lab 6: Orientation PID Control</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+  <link rel="stylesheet" href="https://trinity-woo.github.io/katex/katex.min.css?h=e189fd0238811989c364" />
+  <script defer src="https://trinity-woo.github.io/katex/katex.min.js?h=6b909443e6c8f6e5d24c"></script>
+  <script defer src="https://trinity-woo.github.io/katex/contrib/auto-render.min.js?h=bb53eb953394531aae36"></script>
+  <script>document.addEventListener("DOMContentLoaded", window.zolaTheme.katex.init);</script>
+
+  <!-- Begin Body End inject -->
+  
+  <!-- End Body End inject -->
+</body>
+
+</html>
